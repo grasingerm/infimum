@@ -1,0 +1,250 @@
+diary on
+
+% ---------------- Problem 2.2 -------------------------------
+
+f2 = [5; 4; 3; 2; 1.5];
+LB2 = zeros(5);
+UB2(1:5) = Inf;
+A2eq = [0.1 0.25 0.5 0.75 0.95; 0.9 0.75 0.5 0.25 0.05];
+b2eq = [0.3; 0.7];
+[x2, fval, eflag, output] = linprog(f2, [], [], A2eq, b2eq, LB2, UB2)
+
+Optimization terminated.
+
+x2 =
+
+    0.0000
+    0.8428
+    0.1144
+    0.0428
+    0.0000
+
+
+fval =
+
+    3.8000
+
+
+eflag =
+
+     1
+
+
+output = 
+
+         iterations: 6
+          algorithm: 'interior-point-legacy'
+       cgiterations: 0
+            message: 'Optimization terminated.'
+    constrviolation: 1.1102e-16
+      firstorderopt: 6.8655e-09
+
+% ---------------------- Problem 2.4 -------------------------------
+
+f4 = [-30; -20; -40; -25; -10];
+A4eq = [2 1 3 3 1; 3 2 2 1 1];
+b4eq = [7; 10];
+[x4, fval4, eflag4, output4] = linprog(f4, [], [], A4eq, b4eq, LB2, UB2)
+
+x4 =
+
+    0.0000
+    4.0000
+    1.0000
+    0.0000
+    0.0000
+
+
+fval4 =
+
+ -120.0000
+
+
+eflag4 =
+
+     1
+
+
+output4 = 
+
+         iterations: 7
+          algorithm: 'interior-point-legacy'
+       cgiterations: 0
+            message: 'Optimization terminated.'
+    constrviolation: 2.6645e-15
+      firstorderopt: 6.0022e-12
+
+% ------------------------ Problem 2.6 ------------------------------------
+
+f6 = [5; 3; 2; 4.5; 5.5; 3.5; 6; 4; 3; 4.5; 5.5; 3.5; 0; 0];
+
+A6eq = [1 1 1 1 1 1 0 0 0 0 0 0 1 0; 
+       0 0 0 0 0 0 1 1 1 1 1 1 0 1; 
+       1 0 0 1 0 0 1 0 0 1 0 0 0 0; 
+       0 1 0 0 1 0 0 1 0 0 1 0 0 0;
+       0 0 1 0 0 1 0 0 1 0 0 1 0 0]  
+
+b6eq = [10; 15; 8; 14; 3];
+LB6 = zeros(length(f6)); UB6(1:length(f6)) = Inf;
+[x6a, fval6a, eflag6a, output6a] = linprog(f6, [], [], A6eq, b6eq, LB6, UB6)
+
+Optimization terminated.
+
+x6a =
+
+    0.0000
+    8.3749
+    1.6251
+    0.0000
+    0.0000
+    0.0000
+    0.0000
+    5.6251
+    1.3749
+    8.0000
+    0.0000
+    0.0000
+    0.0000
+    0.0000
+
+
+fval6a =
+
+   91.0000
+
+
+eflag6a =
+
+     1
+
+
+output6a = 
+
+         iterations: 6
+          algorithm: 'interior-point-legacy'
+       cgiterations: 0
+            message: 'Optimization terminated.'
+    constrviolation: 2.3093e-14
+      firstorderopt: 1.6384e-13
+
+A6beq = [1 1 1 0 0 0 1 0; 
+        0 0 0 1 1 1 0 1; 
+        1 0 0 1 0 0 0 0;
+        0 1 0 0 1 0 0 0;
+        0 0 1 0 0 1 0 0];
+b6beq = [10; 15; 8; 14; 3];
+LB6b = zeros(length(f6b)); UB6b(1:length(f6b)) = Inf;
+f6b = [4.5; 3; 2; 4.5; 4; 3; 0; 0];
+[x6b, fval6b, eflag6b, output6b] = linprog(f6b, [], [], A6beq, b6beq, LB6b, UB6b)
+
+x6b =
+
+    0.0000
+    8.8563
+    1.1437
+    8.0000
+    5.1437
+    1.8563
+    0.0000
+    0.0000
+
+
+fval6b =
+
+   91.0000
+
+
+eflag6b =
+
+     1
+
+
+output6b = 
+
+         iterations: 5
+          algorithm: 'interior-point-legacy'
+       cgiterations: 0
+            message: 'Optimization terminated.'
+    constrviolation: 3.2214e-09
+      firstorderopt: 4.0960e-08
+
+% switching algorithm to simplex
+options = optimoptions('linprog','Algorithm','simplex');
+
+f6c1 = [1; 1.5; 2; 1.5];
+A6c1 = [1 0 1 0;
+        0 1 0 1;
+        1 1 0 0;
+        0 0 1 1];
+LB6c1 = zeros(4); UB6c1(1:4) = Inf;
+[x6c1, fval6c1, eflag6c1, output6c1] = linprog(f6c1, [], [], A6c1, b6c1, LB6c1, UB6c1)
+
+Optimization terminated.
+
+x6c1 =
+
+    8.0000
+    2.0000
+    0.0000
+   15.0000
+
+
+fval6c1 =
+
+   33.5000
+
+
+eflag6c1 =
+
+     1
+
+
+output6c1 = 
+
+         iterations: 5
+          algorithm: 'interior-point-legacy'
+       cgiterations: 0
+            message: 'Optimization terminated.'
+    constrviolation: 2.1316e-14
+      firstorderopt: 3.1924e-10
+
+f6c2 = [4; 2; 1; 3; 4; 2];
+A6c2 = [1 1 1 0 0 0;
+       0 0 0 1 1 1;
+       1 0 0 1 0 0;
+       0 1 0 0 1 0;
+       0 0 1 0 0 1];
+b6c2 = [8; 17; 8; 14; 3];
+LB6c2 = zeros(6); UB6c2(1:6) = Inf;
+[x6c2, fval6c2, eflag6c2, output6c2] = linprog(f6c2, [], [], A6c2, b6c2, LB6c2, UB6c2)
+
+Optimization terminated.
+
+x6c2 =
+
+    0.0000
+    8.0000
+    0.0000
+    8.0000
+    6.0000
+    3.0000
+
+
+fval6c2 =
+
+   70.0000
+
+
+eflag6c2 =
+
+     1
+
+
+output6c2 = 
+
+         iterations: 5
+          algorithm: 'interior-point-legacy'
+       cgiterations: 0
+            message: 'Optimization terminated.'
+    constrviolation: 5.3291e-15
+      firstorderopt: 1.3490e-11
