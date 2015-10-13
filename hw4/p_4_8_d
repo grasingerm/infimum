@@ -1,0 +1,45 @@
+f = [0; 0; 0; -1; 0; 0; 0];
+
+Aeq = [1 1 1 0 0 0 0;
+0 -3 1 -1 -1 0 0;
+3 0 -3 -1 0 -1 0;
+-1 3 0 -1 0 0 -1];
+
+beq = [1; 0; 0; 0];
+LB = zeros(7);
+UB(1:7) = Inf;
+[x,fval,exitflag,output] = linprog(f, [], [], Aeq, beq, LB, UB)
+
+Optimization terminated.
+
+x =
+
+    0.4286
+    0.1429
+    0.4286
+    0.0000
+    0.0000
+    0.0000
+    0.0000
+
+
+fval =
+
+  -1.2350e-14
+
+
+exitflag =
+
+     1
+
+
+output = 
+
+         iterations: 6
+          algorithm: 'interior-point'
+       cgiterations: 0
+            message: 'Optimization terminated.'
+    constrviolation: 1.1244e-13
+      firstorderopt: 5.0670e-13
+
+diary off

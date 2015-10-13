@@ -1,0 +1,23 @@
+Four friends Alpha, Beta, Gamma and Delta need to cross a river.  
+There is only one row boat and it can only accommodate two people at a time.
+Since the two people need to synchronize their rowing, the time it takes the get the boat across is equal to that of the slowest rower on the boat.
+
+Alpha:	 1 minute to row across
+Beta: 	 2 minutes to row across
+Gamma: 	 5 minutes to row across
+Delta: 	 10 minutes to row across
+
+So for example it would take Alpha and Delta 10 minutes to row across when they are crossing together, but Alpha 1 minute when she is by herself.
+
+The goal is to find the sequence that would allow the friends to cross in the fastest time.  Of course you can do this by hand, but imagine if there were 1000 friends waiting to cross.
+
+Express the problem as a linear program and solve using Matlab.  I recommend forcing matlab to use the simplex method.
+
+Things you can assume: 
+
+- It will take 3 forward trips with 2 passengers and 2 backward trips with 1 passenger to get everyone across.
+
+Things you can not assume:
+
+- You know the optimal solution or the minimum time.
+
