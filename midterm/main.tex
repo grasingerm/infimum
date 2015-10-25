@@ -135,14 +135,72 @@ Area = \frac{\sqrt{3}}{3}(-d_1 + d_2 + d_3)^2
 \subsection{Standard Form}
 
 The next step in the solution process is to take our preliminary formulation and write it in standard form.
-This means writing the cost function as a function that is linear in the unknowns and for the constraints, this means rewriting them in the form $\mathbf{A} \mathbf{x} = \mathbf{b}$.
+This means writing the cost function as a function that is linear in the unknowns. For the constraints, this means rewriting them in the form $\mathbf{A} \mathbf{x} = \mathbf{b}$.
 
 The cost function in our preliminary formulation is non-linear.
-We can fix this however by recognizing that the solution to minimizing $|-d_1 + d_2 + d_3|$ will also minimize (\ref{eq:prelim_cost}).
+We can simplify this however by recognizing that the solution to minimizing $|-d_1 + d_2 + d_3|$ will also minimize (\ref{eq:prelim_cost}).
 Another simplification can be made that is more subtle.
-Minimizing $|-d_1 + d_2 + d_3|$ requires minimizing both $(-d_1 + d_2 + d_3)$ and $-(-d_1 + d_2 + d_3)$.
-Standard form requires that we minimize only one cost function.
-Upon inspect of the constraints, (\ref{eq:const_1}--\ref{eq:const_3}), 
+Minimizing $|-d_1 + d_2 + d_3|$ requires minimizing both $(-d_1 + d_2 + d_3)$ and $-(-d_1 + d_2 + d_3)$, but standard form requires that we minimize only one cost function.
+If we return to the original objective, part \ref{enum:base_below} tells us that the base of the triangle is below the points.
+It is clear that if the base is below the points, and the triangle encloses the points, that lines (\ref{eq:d2}) and (\ref{eq:d3}) must intersect above the base of the triangle (i.e. $x_2$ of their intersection must be greater than $d_1$).
+Some elementary algebra shows that this can only occur if $-d_1 + d_2 + d_3 > 0$.
+This allows us to simplify the cost function to, $-d_1 + d_2 + d_3$, which satisfies standard form.
+The last modification that must be made to the cost function is to rewrite the unknowns as free variables, i.e. as a difference of two non-negative variables, because they should not be bounded from below by zero.
+Each $d_i$ then should be rewritten as $u_i - v_i$ where $u_i, v_i$ are non-negative for every index \textit{i}.
+More formally,
+
+\begin{equation} \label{eq:lp_cost}
+\mathbf{c}^T \mathbf{d}
+\end{equation}
+
+\noindent is the cost function we will aim to minimize, where \[\mathbf{c}^T = \begin{bmatrix}-1 & 1 & 1 & -1 & 1 & -1\end{bmatrix}\], and \[\mathbf{d}^T = \begin{bmatrix}u_1 & v_1 & u_2 & v_2 & u_3 & v_3\end{bmatrix}\].
+
+To write the constraints in standard form, we must first write the inequalities as equalities using slack variables.
+Equations (\ref{eq:const_1}--\ref{eq:const_3}) with slack variables are
+
+\begin{eqnarray}
+\label{eq:lp_const_1} \mathbf{a}_1^T \mathbf{x} - r_i &=& d_1\\
+\label{eq:lp_const_2} \mathbf{a}_2^T \mathbf{x} + s_i &=& d_2 \hspace{0.5in} \forall{\mathbf{x}} \in \left\{ \mathbf{x}_i \right\}_{i=1}^n\\
+\label{eq:lp_const_3} \mathbf{a}_3^T \mathbf{x} + t_i &=& d_3
+\end{eqnarray}
+
+\noindent where $r_i$, $s_i$, and $t_i$ are the $3n$ slack variables and are non-negative for all $i = 1, 2, ..., n$.
+
+The slack variables are now part of the unknowns of the problem.
+It is therefor necessary to extend our vector of unknowns from the definition given previously to include the slack variables.
+Let $\mathbf{u}$ denote all of the unknowns of the problem,
+
+\begin{equation} \label{eq:u}
+u = \begin{bmatrix}
+u_1 \\ v_1 \\ u_2 \\ v_2 \\ u_3 \\ v_3 \\
+r_1 \\ s_1 \\ t_1 \\ %r_2 \\ s_2 \\ t_2 \\
+\vdots \\ r_n \\ s_n \\ t_n
+\end{bmatrix}
+\end{equation}
+
+\noindent so that $\mathbf{u}$ is a vector with $3n + 6$ elements.
+
+The constraints may now be written in the form $\mathbf{A} \mathbf{u} = \mathbf{b}$ where
+
+\begin{equation}
+\mathbf{A} = \left[ \begin{smallmatrix}
+1 & -1 & 0 & 0 & 0 & 0 & -1 & 0 & 0 & \cdots & 0 & 0 & 0\\
+0 & 0 & 1 & -1 & 0 & 0 & 0 & 1 & 0 & \cdots & 0 & 0 & 0\\
+0 & 0 & 0 & 0 & 1 & -1 & 0 & 0 & 1 & \cdots & 0 & 0 & 0\\
+\vdots & & & & & & \vdots & & & \cdots & & & \vdots\\
+1 & -1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & \cdots & -1 & 0 & 0\\
+0 & 0 & 1 & -1 & 0 & 0 & 0 & 0 & 0 & \cdots & 0 & 1 & 0\\
+0 & 0 & 0 & 0 & 1 & -1 & 0 & 0 & 0 & \cdots & 0 & 0 & 1\\
+\end{smallmatrix} \right]
+\end{equation}
+
+\noindent is $3n \mathnormal{x} 3n+6$ matrix, and,
+
+\begin{equation}
+\mathbf{b} = \begin{bmatrix}
+
+\end{bmatrix}
+\end{equation}
 
 \section{MATLAB Code}
 

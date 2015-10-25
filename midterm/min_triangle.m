@@ -12,7 +12,7 @@ function [x, d1, d2, d3, area] = min_triangle(filename, R1, C1, do_plot)
   end
 
   % equations of lines
-  a = [0 1; -sqrt(3)/2 1/2; sqrt(3)/2 1/2];
+  a = [0 1; sqrt(3)/2 1/2; -sqrt(3)/2 1/2];
 
   % read points in from csv file
   X = csvread(filename, R1, C1);
@@ -32,25 +32,24 @@ function [x, d1, d2, d3, area] = min_triangle(filename, R1, C1, do_plot)
     b(3*i-2:3*i)     = a * transpose(X(i,:));
   end
 
+  A
+  b
+
   % x = [d1; d2; d3]  = [u1; v1; u2; v2; u3; v3];
   % f = [-1; 1; 1]    = [-1; 1; 1; -1; 1; -1];
   f = [-1; 1; 1; -1; 1; -1];
   x = linprog(f, A, b, [], [], LB, UB);
 
   d1 = x(1) - x(2);
-  d2 = -(x(3) - x(4));
-  d3 = -(x(5) - x(6));
+  d2 = x(3) - x(4);
+  d3 = x(5) - x(6);
 
   area = sqrt(3) / 3 * (-d1 + d2 + d3)^2;
   
   if do_plot
-    x_lin = linspace(floor(min(X(:,1))/5) * 5, ceil(max(X(:,2))/5) * 5, 250);
-    d1_ys(1:250) = d1;
-    d2_ys = 2*d2 - sqrt(3)*x_lin;
-    d3_ys = 2*d3 + sqrt(3)*x_lin;
     scatter(X(:,1), X(:,2))
     hold on
-    plot(x_lin, d1_ys, 'r-', x_lin, d2_ys, 'b-', x_lin, d3_ys, 'g-')
+    plot_triangle(d1, d2, d3);
   end
   
 end
