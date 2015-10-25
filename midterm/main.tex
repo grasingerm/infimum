@@ -39,15 +39,18 @@
 \tableofcontents
 \newpage
 
-\section{Problem 1: The Smallest Triangle}
+\section{Problem 1: The Smallest Triangle} \label{sec:small_triangle}
 
 \subsection{Objective}
 
-The objective of the problem is to find the smallest equilateral triangle that encloses a given set of \textit{n} points in two dimensions, $(x_1, x_2)$.
-The base of the triangle is fixed to be parallel to the $x_1$-axis.
-The base of the triangle is below the points.
+The objective of the problem is to find the smallest equilateral triangle such that: 
+\begin{enumerate}
+	\item \label{enum:enclose} The triangle encloses a given set of \textit{n} points in two dimensions, $(x_1, x_2)$.
+	\item \label{enum:base_parallel} The base of the triangle is fixed to be parallel to the $x_1$-axis.
+	\item \label{enum:base_below} The base of the triangle is below the points.
+\end{enumerate}
 
-\subsection{Formulation}
+\subsection{Preliminary Formulation}
 
 We can find a solution to the smallest triangle problem by formulating it as a linear program.
 This consists of describing the problem by constraints as a linear system of equations and a cost function that is linear in the unknowns.
@@ -57,14 +60,16 @@ This consists of describing the problem by constraints as a linear system of equ
 A triangle consists of three lines where each pair of lines meets at a vertex.
 For the lines of an equilateral triangle where the base is parallel to the $x_1$-axis, the lines can be given by the three equations,
 
-\begin{equation*}x_2 = d_1\end{equation*}
-\begin{equation} \label{eq:triangle_lines_ls}
-\frac{\sqrt{3}}{2} x_1 + \frac{1}{2} x_2 = d_2
-\end{equation}
-\begin{equation*}-\frac{\sqrt{3}}{2} x_1 + \frac{1}{2} x_2 = d_3\end{equation*}
+\begin{eqnarray} \label{eq:d1}
+x_2 &=& d_1 \\
+\label{eq:d2}
+\frac{\sqrt{3}}{2} x_1 + \frac{1}{2} x_2 &=& d_2\\
+\label{eq:d3}
+-\frac{\sqrt{3}}{2} x_1 + \frac{1}{2} x_2 &=& d_3
+\end{eqnarray}
 
 \noindent where $d_1$, $d_2$, and $d_3$ are the three unknowns that construct the triangle.
-Alternatively, Equation \ref{eq:triangle_lines_ls} can be written as:
+Alternatively, (\ref{eq:d1}--\ref{eq:d3}) can be written as:
 
 \begin{equation} \label{eq:triangle_lines_la}
 \mathbf{a}_i^T \mathbf{x} = d_i
@@ -75,6 +80,69 @@ Alternatively, Equation \ref{eq:triangle_lines_ls} can be written as:
 Now that we have equations that construct a unique triangle, it is necessary to introduce constraints on $d_1$, $d_2$, and $d_3$.
 In plain English, we need ensure that the triangle is constructed such that all of the points lie inside of it.
 To express this formally, we need to establish relationships between each point and each line.
+Consider the line constructed from $\mathbf{a}_1^T \mathbf{x} = d_1$. When $\mathbf{a}_1^T \mathbf{x} < d_1$, the point $\mathbf{x}$ falls below the line.
+We can see then that to satisfy part \ref{enum:base_below} of the problem objective, $d_1$ must not be greater than $\mathbf{a}_1^T \mathbf{x}$ for any point $\mathbf{x}$.
+Using similar reasoning we derive the constraints for $d_2$ and $d_3$. The three constraints are formally,
+
+\begin{eqnarray}
+\label{eq:const_1} \mathbf{a}_1^T \mathbf{x} &\ge& d_1\\
+\label{eq:const_2} \mathbf{a}_2^T \mathbf{x} &\le& d_2 \hspace{0.5in} \forall{\mathbf{x}} \in \left\{ \mathbf{x}_i \right\}_{i=1}^n\\
+\label{eq:const_3} \mathbf{a}_3^T \mathbf{x} &\le& d_3
+\end{eqnarray}
+
+\noindent where $\left\{ \mathbf{x}_i \right\}_{i=1}^n$ is the sequence of \textit{n} points.
+
+\subsubsection{Cost Function}
+
+Part of the objective of problem \ref{sec:small_triangle} is that the triangle be the smallest triangle possible.
+We must therefor derive the size of the triangle as a function of the unknowns.
+We can assume that by ``smallest'', what is meant is the triangle be of the least possible area.
+The area of an equilateral triangle can be determined from the length of its sides, $Area = \frac{\sqrt{3}}{4} s^2$.
+It is sufficient then to derive the length of the triangle's sides as a function of the unknowns.
+The length of a line can be determined using the coordinates of the points which the line connects: $\sqrt{(x_{21} - x_{11})^2 + (x_{22} - x_{12})^2}$ where $x_{ij}$ is the $j^{th}$ coordinate of the $i^{th}$ point.
+The length of the base of the triangle can be determined by finding where the base intersects each of the other two lines.
+We can find the points of intersection by setting equation (\ref{eq:d1}) equal to equation (\ref{eq:d2}) and equation (\ref{eq:d1}) equal to equation (\ref{eq:d3}).
+If we set (\ref{eq:d1}) equal to (\ref{eq:d2}) we end up with the following relationship:
+
+\begin{align}
+d_1 - x_2 &= d_2 - \frac{\sqrt{3}}{2} x_1 - \frac{1}{2} x_2\\
+d_1 &= 2d_2 - \sqrt{3} x_1\\
+\label{eq:intersect_1}
+x_1 &= \frac{\sqrt{3}}{3}(d_1 - 2d_2) 
+\end{align}
+
+\noindent which tells us the $x_1$ coordinate where the two lines intersect.
+Similarly, using (\ref{eq:d1}) and (\ref{eq:d3}), the $x_1$ coordinate where the base and Line \ref{eq:d3} insect is,
+
+\begin{equation} \label{eq:intersect_2}
+x_1 = \frac{\sqrt{3}}{3}(2d_3 - d_1) 
+\end{equation}
+
+\noindent The length of the base is the difference of the two $x_1$-coordinates given by Equations \ref{eq:intersect_1} and \ref{eq:intersect_2}.
+
+\begin{equation} \label{eq:side}
+s = \frac{2 \sqrt{3}}{3}(-d_1 + d_2 + d_3)
+\end{equation}
+
+\noindent Plugging (\ref{eq:side}) into the equation for the area of the equilateral triangle yields,
+
+\begin{equation} \label{eq:prelim_cost}
+Area = \frac{\sqrt{3}}{3}(-d_1 + d_2 + d_3)^2
+\end{equation}
+
+\noindent which is the area of the triangle and the cost function for the problem.
+
+\subsection{Standard Form}
+
+The next step in the solution process is to take our preliminary formulation and write it in standard form.
+This means writing the cost function as a function that is linear in the unknowns and for the constraints, this means rewriting them in the form $\mathbf{A} \mathbf{x} = \mathbf{b}$.
+
+The cost function in our preliminary formulation is non-linear.
+We can fix this however by recognizing that the solution to minimizing $|-d_1 + d_2 + d_3|$ will also minimize (\ref{eq:prelim_cost}).
+Another simplification can be made that is more subtle.
+Minimizing $|-d_1 + d_2 + d_3|$ requires minimizing both $(-d_1 + d_2 + d_3)$ and $-(-d_1 + d_2 + d_3)$.
+Standard form requires that we minimize only one cost function.
+Upon inspect of the constraints, (\ref{eq:const_1}--\ref{eq:const_3}), 
 
 \section{MATLAB Code}
 
