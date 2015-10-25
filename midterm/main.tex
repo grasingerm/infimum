@@ -1,0 +1,98 @@
+\documentclass{article}
+
+\usepackage{mathtools}
+\usepackage{bm}
+\usepackage[margin=1.0in]{geometry}
+\usepackage{courier}
+\usepackage{color}
+\usepackage{listings}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+
+\title{Optimization Methods, Midterm Exam}
+\date{2015/10/28}
+\author{Matthew Grasinger}
+
+\begin{document}
+	
+\lstset{language=Matlab,
+	keywords={break,case,catch,continue,else,elseif,end,for,function,
+		global,if,otherwise,persistent,return,switch,try,while},
+	basicstyle=\ttfamily,
+	keywordstyle=\color{blue},
+	commentstyle=\color{gray},
+	stringstyle=\color{dkgreen},
+	numbers=left,
+	numberstyle=\tiny\color{red},
+	stepnumber=1,
+	numbersep=10pt,
+	backgroundcolor=\color{white},
+	tabsize=4,
+	showspaces=false,
+	showstringspaces=false}
+	
+\pagenumbering{gobble}
+\maketitle
+\newpage
+\pagenumbering{arabic}
+\tableofcontents
+\newpage
+
+\section{Problem 1: The Smallest Triangle}
+
+\subsection{Objective}
+
+The objective of the problem is to find the smallest equilateral triangle that encloses a given set of \textit{n} points in two dimensions, $(x_1, x_2)$.
+The base of the triangle is fixed to be parallel to the $x_1$-axis.
+The base of the triangle is below the points.
+
+\subsection{Formulation}
+
+We can find a solution to the smallest triangle problem by formulating it as a linear program.
+This consists of describing the problem by constraints as a linear system of equations and a cost function that is linear in the unknowns.
+
+\subsubsection{Constraints}
+
+A triangle consists of three lines where each pair of lines meets at a vertex.
+For the lines of an equilateral triangle where the base is parallel to the $x_1$-axis, the lines can be given by the three equations,
+
+\begin{equation*}x_2 = d_1\end{equation*}
+\begin{equation} \label{eq:triangle_lines_ls}
+\frac{\sqrt{3}}{2} x_1 + \frac{1}{2} x_2 = d_2
+\end{equation}
+\begin{equation*}-\frac{\sqrt{3}}{2} x_1 + \frac{1}{2} x_2 = d_3\end{equation*}
+
+\noindent where $d_1$, $d_2$, and $d_3$ are the three unknowns that construct the triangle.
+Alternatively, Equation \ref{eq:triangle_lines_ls} can be written as:
+
+\begin{equation} \label{eq:triangle_lines_la}
+\mathbf{a}_i^T \mathbf{x} = d_i
+\end{equation}
+
+\noindent where $\mathbf{a}_1 = \begin{bmatrix}0 && 1\end{bmatrix}^T$, $\mathbf{a}_2 = \begin{bmatrix}\frac{\sqrt{3}}{2} && \frac{1}{2}\end{bmatrix}^T$, $\mathbf{a}_3 = \begin{bmatrix}-\frac{\sqrt{3}}{2} && \frac{1}{2}\end{bmatrix}^T$ and $\mathbf{x} = \begin{bmatrix}x_1 && x_2\end{bmatrix}^T$.
+
+Now that we have equations that construct a unique triangle, it is necessary to introduce constraints on $d_1$, $d_2$, and $d_3$.
+In plain English, we need ensure that the triangle is constructed such that all of the points lie inside of it.
+To express this formally, we need to establish relationships between each point and each line.
+
+\section{MATLAB Code}
+
+The following matlab script was written and ran in order to solve the river crossing problem:
+
+\begin{lstlisting}
+\end{lstlisting}
+
+\section{Results}
+
+The output of the script was:
+
+\begin{verbatim}
+2 = the number of forward trips alpha makes with beta
+1 = the number of forward trips gamma makes with delta
+1 = the number of backward trips alpha makes
+1 = the number of backward trips beta makes
+The total time taken for everyone to cross = 17
+\end{verbatim}
+
+\end{document}
