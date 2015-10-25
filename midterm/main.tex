@@ -198,9 +198,27 @@ The constraints may now be written in the form $\mathbf{A} \mathbf{u} = \mathbf{
 
 \begin{equation}
 \mathbf{b} = \begin{bmatrix}
-
+\mathbf{a}^T_1 \mathbf{x}_1\\
+\mathbf{a}^T_2 \mathbf{x}_1\\
+\mathbf{a}^T_3 \mathbf{x}_1\\
+\vdots\\
+\mathbf{a}^T_1 \mathbf{x}_n\\
+\mathbf{a}^T_2 \mathbf{x}_n\\
+\mathbf{a}^T_3 \mathbf{x}_n
 \end{bmatrix}
 \end{equation}
+
+\noindent is a vector of $3n$ elements.
+
+We can now write the smallest triangle problem as a linear program in standard form. It is given by,
+
+\begin{eqnarray*}
+\min_\mathbf{u} \mathbf{c}^T \mathbf{u}\\
+\mathbf{A} \mathbf{u} = \mathbf{b}\\
+\mathbf{u} \ge \mathbf{0}
+\end{eqnarray*}
+
+\noindent where $\mathbf{c}^T = \begin{bmatrix}-1 & 1 & 1 & -1 & 1 & -1 & 0 & \cdots & 0\end{bmatrix}$ is a vector of $3n + 6$ elements.
 
 \section{MATLAB Code}
 
