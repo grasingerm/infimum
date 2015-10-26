@@ -52,7 +52,7 @@ The objective of the problem is to find the smallest equilateral triangle such t
 
 \subsection{Preliminary Formulation}
 
-We can find a solution to the smallest triangle problem by formulating it as a linear program.
+We can find a solution to the smallest triangle problem by formulating it as a linear program (LP).
 This consists of describing the problem by constraints as a linear system of equations and a cost function that is linear in the unknowns.
 
 \subsubsection{Constraints}
@@ -153,7 +153,7 @@ More formally,
 \mathbf{c}^T \mathbf{d}
 \end{equation}
 
-\noindent is the cost function we will aim to minimize, where \[\mathbf{c}^T = \begin{bmatrix}-1 & 1 & 1 & -1 & 1 & -1\end{bmatrix}\], and \[\mathbf{d}^T = \begin{bmatrix}u_1 & v_1 & u_2 & v_2 & u_3 & v_3\end{bmatrix}\].
+\noindent is the cost function we will aim to minimize, where \[\mathbf{c}^T = \begin{bmatrix}-1 & 1 & 1 & -1 & 1 & -1\end{bmatrix}\] and \[\mathbf{d}^T = \begin{bmatrix}u_1 & v_1 & u_2 & v_2 & u_3 & v_3\end{bmatrix}\].
 
 To write the constraints in standard form, we must first write the inequalities as equalities using slack variables.
 Equations (\ref{eq:const_1}--\ref{eq:const_3}) with slack variables are
@@ -219,6 +219,75 @@ We can now write the smallest triangle problem as a linear program in standard f
 \end{eqnarray*}
 
 \noindent where $\mathbf{c}^T = \begin{bmatrix}-1 & 1 & 1 & -1 & 1 & -1 & 0 & \cdots & 0\end{bmatrix}$ is a vector of $3n + 6$ elements.
+
+\subsection{Problem 1b: Duality}
+
+Investigating the dual of the smallest triangle linear program will be simpler if we reformulate the constraints to use the original inequalities instead of the equalities with slack variables.
+The reformulation is,
+
+\begin{equation*}
+\mathbf{A} = \begin{bmatrix}
+-1 & 1 & 0 & 0 & 0 & 0\\
+0 & 0 & 1 & -1 & 0 & 0\\
+0 & 0 & 0 & 0 & 1 & -1\\
+\vdots & & & & & \vdots\\
+-1 & 1 & 0 & 0 & 0 & 0\\
+0 & 0 & 1 & -1 & 0 & 0\\
+0 & 0 & 0 & 0 & 1 & -1\\
+\end{bmatrix}
+\end{equation*}
+
+\noindent is $3n$ by $6$ matrix, and,
+
+\begin{equation*}
+\mathbf{b} = \begin{bmatrix}
+-\mathbf{a}^T_1 \mathbf{x}_1\\
+\mathbf{a}^T_2 \mathbf{x}_1\\
+\mathbf{a}^T_3 \mathbf{x}_1\\
+\vdots\\
+-\mathbf{a}^T_1 \mathbf{x}_n\\
+\mathbf{a}^T_2 \mathbf{x}_n\\
+\mathbf{a}^T_3 \mathbf{x}_n
+\end{bmatrix}
+\end{equation*}
+
+\noindent is a vector of $3n$ elements.
+
+We can now write the smallest triangle problem as a linear program in a form that is more natural for taking the dual of,
+
+\begin{eqnarray*}
+	\min_\mathbf{u} \mathbf{c}^T \mathbf{u}\\
+	\mathbf{A} \mathbf{u} \ge \mathbf{b}\\
+	\mathbf{u} \ge \mathbf{0}
+\end{eqnarray*}
+
+\noindent where \[\mathbf{c}^T = \begin{bmatrix}-1 & 1 & 1 & -1 & 1 & -1\end{bmatrix}\] and \[\mathbf{u}^T = \begin{bmatrix}u_1 & v_1 & u_2 & v_2 & u_3 & v_3\end{bmatrix}\].
+
+\noindent A linear program in this form has a dual of the form
+
+\begin{eqnarray*}
+	\max_{\boldsymbol{\lambda}} \boldsymbol{\lambda}^T \mathbf{b}\\
+	\boldsymbol{\lambda}^T \mathbf{A} \le \mathbf{c}^T\\
+	\boldsymbol{\lambda} \ge \mathbf{0}
+\end{eqnarray*}
+
+\noindent where $\boldsymbol{\lambda}$ is a vector of unknowns with $3n$ elements.
+If we write out the tableau for the dual LP it can give us insight into the original LP.
+The tableau is
+
+\begin{equation*}
+\left[ \begin{smallmatrix}
+-1 & 0 & 0 & -1 & 0 & 0 & -1 & 0 & 0 & -1 & 0 & 0 & -1 & 0 & 0 & \vline & -1\\
+1 & 0 & 0 & 1 & 0 & 0 & 1 & 0 & 0 & 1 & 0 & 0 & 1 & 0 & 0 & \vline & 1\\
+0 & 1 & 0 & 0 & 1 & 0 & 0 & 1 & 0 & 0 & 1 & 0 & 0 & 1 & 0 & \vline & 1\\
+0 & -1 & 0 & 0 & -1 & 0 & 0 & -1 & 0 & 0 & -1 & 0 & 0 & -1 & 0 & \vline & -1\\
+0 & 0 & 1 & 0 & 0 & 1 & 0 & 0 & 1 & 0 & 0 & 1 & 0 & 0 & 1 & \vline & 1\\
+0 & 0 & -1 & 0 & 0 & -1 & 0 & 0 & -1 & 0 & 0 & -1 & 0 & 0 & -1 & \vline & -1\\
+\hline \\
+%\hline & \hline & \hline & \hline & \hline & \hline & \hline & \hline & \hline & \hline & \hline & \hline & \hline & \hline & \hline & \vline & \hline\\
+3.00 & 4.01 & -1.10 & 4.00 & 4.60 & -0.60 & 4.00 & 5.46 & -1.46 & 5.00 & 6.83 & -1.83 & 5.00 & 4.23 & 0.77 & \vline & 0\\
+\end{smallmatrix} \right]
+\end{equation*}
 
 \subsection{Problem 1c: Solution using MATLAB}
 
