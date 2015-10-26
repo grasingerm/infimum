@@ -35,9 +35,9 @@
 \pagenumbering{gobble}
 \maketitle
 \newpage
-\pagenumbering{arabic}
 \tableofcontents
 \newpage
+\pagenumbering{arabic}
 
 \section{Problem 1: The Smallest Triangle} \label{sec:small_triangle}
 
@@ -159,9 +159,9 @@ To write the constraints in standard form, we must first write the inequalities 
 Equations (\ref{eq:const_1}--\ref{eq:const_3}) with slack variables are
 
 \begin{eqnarray}
-\label{eq:lp_const_1} \mathbf{a}_1^T \mathbf{x} - r_i &=& d_1\\
-\label{eq:lp_const_2} \mathbf{a}_2^T \mathbf{x} + s_i &=& d_2 \hspace{0.5in} \forall{\mathbf{x}} \in \left\{ \mathbf{x}_i \right\}_{i=1}^n\\
-\label{eq:lp_const_3} \mathbf{a}_3^T \mathbf{x} + t_i &=& d_3
+\label{eq:lp_const_1} \mathbf{a}_1^T \mathbf{x} &=& d_1 + r_i\\
+\label{eq:lp_const_2} \mathbf{a}_2^T \mathbf{x} &=& d_2 - s_i \hspace{0.5in} \forall{\mathbf{x}} \in \left\{ \mathbf{x}_i \right\}_{i=1}^n\\
+\label{eq:lp_const_3} \mathbf{a}_3^T \mathbf{x} &=& d_3 - t_i
 \end{eqnarray}
 
 \noindent where $r_i$, $s_i$, and $t_i$ are the $3n$ slack variables and are non-negative for all $i = 1, 2, ..., n$.
@@ -184,17 +184,17 @@ The constraints may now be written in the form $\mathbf{A} \mathbf{u} = \mathbf{
 
 \begin{equation}
 \mathbf{A} = \left[ \begin{smallmatrix}
-1 & -1 & 0 & 0 & 0 & 0 & -1 & 0 & 0 & \cdots & 0 & 0 & 0\\
-0 & 0 & 1 & -1 & 0 & 0 & 0 & 1 & 0 & \cdots & 0 & 0 & 0\\
-0 & 0 & 0 & 0 & 1 & -1 & 0 & 0 & 1 & \cdots & 0 & 0 & 0\\
+1 & -1 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & \cdots & 0 & 0 & 0\\
+0 & 0 & 1 & -1 & 0 & 0 & 0 & -1 & 0 & \cdots & 0 & 0 & 0\\
+0 & 0 & 0 & 0 & 1 & -1 & 0 & 0 & -1 & \cdots & 0 & 0 & 0\\
 \vdots & & & & & & \vdots & & & \cdots & & & \vdots\\
-1 & -1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & \cdots & -1 & 0 & 0\\
-0 & 0 & 1 & -1 & 0 & 0 & 0 & 0 & 0 & \cdots & 0 & 1 & 0\\
-0 & 0 & 0 & 0 & 1 & -1 & 0 & 0 & 0 & \cdots & 0 & 0 & 1\\
+1 & -1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & \cdots & 1 & 0 & 0\\
+0 & 0 & 1 & -1 & 0 & 0 & 0 & 0 & 0 & \cdots & 0 & -1 & 0\\
+0 & 0 & 0 & 0 & 1 & -1 & 0 & 0 & 0 & \cdots & 0 & 0 & -1\\
 \end{smallmatrix} \right]
 \end{equation}
 
-\noindent is $3n \mathnormal{x} 3n+6$ matrix, and,
+\noindent is $3n$ by $3n+6$ matrix, and,
 
 \begin{equation}
 \mathbf{b} = \begin{bmatrix}
@@ -220,23 +220,201 @@ We can now write the smallest triangle problem as a linear program in standard f
 
 \noindent where $\mathbf{c}^T = \begin{bmatrix}-1 & 1 & 1 & -1 & 1 & -1 & 0 & \cdots & 0\end{bmatrix}$ is a vector of $3n + 6$ elements.
 
-\section{MATLAB Code}
+\subsection{Problem 1c: Solution using MATLAB}
 
-The following matlab script was written and ran in order to solve the river crossing problem:
+Two functions were written in order to solve the smallest triangle problem.
+The first was the main function, \texttt{min\_triangle}, which takes a path to a comma separated value (CSV) file as its input and returns the vector of unknowns, $d_1$, $d_2$, $d_3$, and the area of the triangle as its output.
+The format of the CSV is such that each line contains the coordinates to one of the \textit{n} points, and the coordinates are separated by a comma:
+
+\begin{align*}
+x_{11}, & \hspace{0.1in} x_{12}\\
+x_{21}, & \hspace{0.1in} x_{22}\\
+\vdots & \hspace{0.1in} \vdots\\
+x_{n1}, & \hspace{0.1in} x_{n2}
+\end{align*}
+
+\noindent If the \texttt{do\_plot} flag that is passed to \texttt{min\_triangle} is true, the function also plots the points given by the CSV and the smallest triangle that encloses them.
+The plot helps verify that the solution satisfies the constraints.
+
+The second function, \texttt{plot\_triangle}, takes $d_1$, $d_2$, and $d_3$ as input and plots an equilateral triangle (using equations (\ref{eq:d1}--\ref{eq:d3})).
+It acts as a helper function for \texttt{min\_triangle}.
+
+\subsubsection{Source Code}
 
 \begin{lstlisting}
+%% min_triangle.m
+
+function [x, d1, d2, d3, area] = min_triangle(filename, R1, C1, do_plot)
+%MIN_TRIANGLE Finds min equilateral triangle that encloses a set of points.
+%
+%   [x, d1, d2, d3, area] = MIN_TRIANGLE(filename) finds the smallest
+%   equilateral triangle that encloses the set of points contained in the csv
+%   file given by filename. Plots points and resulting triangle.
+%
+%   [x, d1, d2, d3, area] = MIN_TRIANGLE(filename, R1, C1) finds the smallest
+%   equilateral triangle that encloses the set of points contained in the csv
+%   file given by filename. Skips first R1 rows and C1 columns of csv. Plots
+%   points and resulting triangle.
+%
+%   [x, d1, d2, d3, area] = MIN_TRIANGLE(filename, R1, C1, do_plot) finds the 
+%   smallest equilateral triangle that encloses the set of points contained in 
+%   the csv file given by filename. Skips first R1 rows and C1 columns of csv.
+%   If do_plot is true, plots points and resulting triangle, else no plot is
+%   created.
+
+  validateattributes(filename, {'char','cell'}, {'nonempty'});
+  
+  if nargin < 3
+    R1 = 0;
+    C1 = 0;
+  end
+  
+  if nargin < 4
+    do_plot = true;
+  end
+  
+  % equations of lines
+  a = [0 1; sqrt(3)/2 1/2; -sqrt(3)/2 1/2];
+  
+  % read points in from csv file
+  X = csvread(filename, R1, C1);
+  
+  % constraints: A * x \leq b
+  % d1, d2, d3 = u1 - v1, u2 - v2, u3 - v3
+  num_points = size(X, 1);
+  A = zeros(3*num_points, 3*num_points+6);
+  b = zeros(3*num_points, 1);
+  LB = zeros(1, 3*num_points+6);
+  UB(1, 1:3*num_points+6) = Inf;
+  
+  for i=1:num_points
+    A(3*i-2,    1:2)   = [1 -1];
+    A(3*i-1,    3:4)   = [1 -1];
+    A(3*i,      5:6)   = [1 -1];
+    A(3*i-2,    3*i+4) =  1;
+    A(3*i-1,    3*i+5) = -1;
+    A(3*i,      3*i+6) = -1;
+    b(3*i-2:3*i)       = a * transpose(X(i,:));
+  end
+  
+  % x = [d1; d2; d3]  = [u1; v1; u2; v2; u3; v3];
+  % f = [-1; 1; 1]    = [-1; 1; 1; -1; 1; -1];
+  f = zeros(3*num_points + 6, 1);
+  f(1:6) = [-1; 1; 1; -1; 1; -1];
+  x = linprog(f, [], [], A, b, LB, UB);
+  
+  d1 = x(1) - x(2);
+  d2 = x(3) - x(4);
+  d3 = x(5) - x(6);
+  
+  area = sqrt(3) / 3 * (-d1 + d2 + d3)^2;
+  
+  if do_plot
+    scatter(X(:,1), X(:,2))
+    hold on
+    plot_triangle(d1, d2, d3);
+  end
+
+end
 \end{lstlisting}
 
-\section{Results}
+\newpage
 
-The output of the script was:
+\begin{lstlisting}
+%% plot_triangle.m
+
+function cost = plot_triangle(d1, d2, d3)
+%PLOT_TRIANGLE Plots an equilateral triangle.
+%
+%   [cost] = PLOT_TRIANGLE(d1, d2, d3) Plots the equilateral triangle given by
+%   the equations: d1 = x2, d2 = sqrt(3)/2 * x1 + 1/2 * x2, and
+%   d3 = -sqrt(3)/2 * x1 + 1/2 * x2.
+  
+  xa = 2*sqrt(3)/3 * (-0.5 * d1 + d2);
+  xb = 2*sqrt(3)/3 * (0.5 * d1 - d3);
+  
+  x1 = min(xa, xb);
+  x2 = max(xa, xb);
+  
+  cost = -d1 + d2 + d3;
+  
+  xs = linspace(x1, x2, 500);
+  ys_d1(1:500) = d1;
+  if cost >= 0
+    xs_1 = xs(1:250);
+    xs_2 = xs(251:500);
+  else
+    xs_2 = xs(1:250);
+    xs_1 = xs(251:500);
+  end
+  ys_d2 = 2 * d2 - sqrt(3) * xs_2;
+  ys_d3 = 2 * d3 + sqrt(3) * xs_1;
+  
+  
+  plot(xs, ys_d1, xs_2, ys_d2, xs_1, ys_d3)
+
+end
+\end{lstlisting}
+
+\subsubsection{Results}
+
+The output of the \texttt{min\_triangle} function was
 
 \begin{verbatim}
-2 = the number of forward trips alpha makes with beta
-1 = the number of forward trips gamma makes with delta
-1 = the number of backward trips alpha makes
-1 = the number of backward trips beta makes
-The total time taken for everyone to cross = 17
+>> [x, d1, d2, d3, area] = min_triangle('points.csv')
+Optimization terminated.
+
+x =
+
+  234.1260
+  231.1260
+  225.3782
+  218.5481
+  229.3384
+  228.5705
+  0.0000
+  2.7321
+  1.8660
+  1.0000
+  2.2321
+  1.3660
+  1.0000
+  1.3660
+  2.2321
+  2.0000
+  0.0000
+  2.5981
+  2.0000
+  2.5981
+  0.0000
+
+
+d1 =
+
+  3.0000
+
+
+d2 =
+
+  6.8301
+
+
+d3 =
+
+  0.7679
+
+
+area =
+
+  12.2065
 \end{verbatim}
+
+\noindent A plot of the triangle can be seen in Figure \ref{fig:triangle}.
+
+\begin{figure} \label{fig:triangle}
+	\centering
+	\includegraphics[width=0.75\linewidth]{results-1}
+	\caption{Smallest equilateral triangle to enclose the set of points \{(3,3), (3,4), (4,4), (5,5), (2,5)\}.}
+\end{figure}
 
 \end{document}

@@ -1,4 +1,9 @@
 function cost = plot_triangle(d1, d2, d3)
+%PLOT_TRIANGLE Plots an equilateral triangle.
+%
+%   [cost] = PLOT_TRIANGLE(d1, d2, d3) Plots the equilateral triangle given by
+%   the equations: d1 = x2, d2 = sqrt(3)/2 * x1 + 1/2 * x2, and
+%   d3 = -sqrt(3)/2 * x1 + 1/2 * x2.
 
 xa = 2*sqrt(3)/3 * (-0.5 * d1 + d2);
 xb = 2*sqrt(3)/3 * (0.5 * d1 - d3);
@@ -24,4 +29,3 @@ ys_d3 = 2 * d3 + sqrt(3) * xs_1;
 plot(xs, ys_d1, xs_2, ys_d2, xs_1, ys_d3)
 
 end
-
