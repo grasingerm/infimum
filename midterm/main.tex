@@ -332,7 +332,8 @@ The second function, \texttt{plot\_triangle}, takes $d_1$, $d_2$, and $d_3$ as i
 It acts as a helper function for \texttt{min\_triangle}.
 
 \subsubsection{Source Code}
-
+\vspace{0.25in}
+\hrule
 \begin{lstlisting}
 %% min_triangle.m
 
@@ -410,8 +411,9 @@ function [x, d1, d2, d3, area] = min_triangle(filename, R1, C1, do_plot)
 end
 \end{lstlisting}
 
-\newpage
-
+\hrule
+\vspace{0.25in}
+\hrule
 \begin{lstlisting}
 %% plot_triangle.m
 
@@ -447,6 +449,8 @@ function cost = plot_triangle(d1, d2, d3)
 
 end
 \end{lstlisting}
+\hrule
+\vspace{0.25in}
 
 \subsubsection{Results}
 
@@ -508,5 +512,55 @@ area =
 	\includegraphics[width=0.75\linewidth]{results-1}
 	\caption{Smallest equilateral triangle to enclose the sequence of points \{(3,3), (3,4), (4,4), (5,5), (2,5)\}.}
 \end{figure}
+
+\newpage
+
+\section{Problem 2: Duality}
+
+We are given the linear program:
+
+\begin{align*}
+&\max_\mathbf{x} \mathbf{c}^T \mathbf{x} \\
+\text{subject to} & \hspace{0.1in} x_1 + x_2 + ... + x_n = 1\\
+&x_i \ge 0, \forall i
+\end{align*}
+
+\subsection{What is the dual for this problem?}
+
+First we rewrite the LP as its corresponding minimization problem,
+
+\begin{align*}
+&\min_\mathbf{x} -\mathbf{c}^T \mathbf{x} \\
+\text{subject to} & \hspace{0.1in} x_1 + x_2 + ... + x_n = 1\\
+&x_i \ge 0, \forall i
+\end{align*}
+
+The dual of this LP is a maximization problem.
+The constraints of the primal become the costs in the dual; and the costs in the primal become part of the constraints in the dual.
+The dual should have one unknown, as the primal has one constraint; and the dual should have \textit{n} constraints.
+The last thing to consider when mapping this linear program to its dual is that equalities in the primal constraints correspond to free variables in the dual.
+This means the unknown in the dual is free.
+The dual is given formally by,
+
+\begin{align*}
+&\max_{u, v} u - v \\
+\text{subject to} & \hspace{0.1in} u - v \le -c_1\\
+& \hspace{0.1in} u - v \le -c_2\\
+& \hspace{0.1in} \vdots \hspace{0.5in} \vdots\\
+& \hspace{0.1in} u - v \le -c_n\\ 
+&u, v \ge 0
+\end{align*}
+
+\subsection{Assume that $c_1$ is the largest coefficient of the cost vector, what is the solution of the dual?}
+
+If $c_1 = \max(\mathbf{c})$ then $-c_1 \le -c_i$ for every $i$.
+It is obvious then that any choice of $u$ and $v$ that satisfy $u - v \le -c_1$ will also satisfy the rest of the constraints.
+The maximum $u - v$ is equal to $-c_1$.
+The solution to the dual is any choice of $u$ and $v$ such that $u - v = -c_1$ and $u, v \ge 0$, say $u = 0$ and $v = c_1$.
+The cost associated with this solution is $-c_1$.
+
+\subsection{Using the solution of the dual, find the solution of the primal.}
+
+Because an optimal solution exists for the dual, we know that an optimal solution exists for the primal, and that its cost is equal to $-c_1$ (in the case of the primal LP being in the form: $\min_\mathbf{x} -\mathbf{c}^T \mathbf{x}$). This is true if $x_1 = 1$ and $x_i = 0$ for every $i > 1$. The solution to the primal then is $\mathbf{x} = \begin{bmatrix}1 & 0 & 0 & \dots & 0\end{bmatrix}^T$.
 
 \end{document}
