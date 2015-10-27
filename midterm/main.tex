@@ -263,7 +263,7 @@ We can now write the smallest triangle problem as a linear program in a form tha
 
 \noindent where \[\mathbf{c}^T = \begin{bmatrix}-1 & 1 & 1 & -1 & 1 & -1\end{bmatrix}\] and \[\mathbf{u}^T = \begin{bmatrix}u_1 & v_1 & u_2 & v_2 & u_3 & v_3\end{bmatrix}\].
 
-\noindent A linear program in this form has a dual of the form
+\noindent A linear program in this form has a dual of the form:
 
 \begin{eqnarray*}
 	\max_{\boldsymbol{\lambda}} \boldsymbol{\lambda}^T \mathbf{b}\\
@@ -272,8 +272,15 @@ We can now write the smallest triangle problem as a linear program in a form tha
 \end{eqnarray*}
 
 \noindent where $\boldsymbol{\lambda}$ is a vector of unknowns with $3n$ elements.
+The solution of the dual of this problem would tell us the following:
+
+\begin{itemize}
+	\item The cost of the dual is a lower bound on the cost of the primal, and if an optimal solution exists for the dual, not only does this imply that there is an optimal solution for the primal, but the costs of the optimal solutions for both the dual and primal are also equivalent.
+	\item If the dual is bounded, the primal cost is bounded.
+\end{itemize}
+
 If we write out the tableau for the dual LP it can give us insight into the original LP.
-The tableau is
+The tableau (not including slack variables) is
 
 \begin{equation*}
 \left[ \begin{smallmatrix}
@@ -285,9 +292,25 @@ The tableau is
 0 & 0 & -1 & 0 & 0 & -1 & 0 & 0 & -1 & 0 & 0 & -1 & 0 & 0 & -1 & \vline & -1\\
 \hline \\
 %\hline & \hline & \hline & \hline & \hline & \hline & \hline & \hline & \hline & \hline & \hline & \hline & \hline & \hline & \hline & \vline & \hline\\
-3.00 & 4.01 & -1.10 & 4.00 & 4.60 & -0.60 & 4.00 & 5.46 & -1.46 & 5.00 & 6.83 & -1.83 & 5.00 & 4.23 & 0.77 & \vline & 0\\
+-3.00 & 4.01 & -1.10 & -4.00 & 4.60 & -0.60 & -4.00 & 5.46 & -1.46 & -5.00 & 6.83 & -1.83 & -5.00 & 4.23 & 0.77 & \vline & 0\\
 \end{smallmatrix} \right]
 \end{equation*}
+
+The bottom row of the dual is a measure of the relative influence, or relative amount of constraint, that each point puts on each line.
+Elements 1, 4, 7, 10, 13 of the bottom row tell us the influence of points $(3,3)$, $(3,4)$, $(4,4)$, $(5,5)$, and $(2,5)$ respectively on the line constructed from $d_1$.
+Let us group all of the relative influences on each line. We collect these influences into ordered tuples of five elements, corresponding to points one through five.
+This will give us the following five-element tuples:
+
+\begin{eqnarray*}
+d_1 & \rightarrow & (-3.00, -4.00, -4.00, -5.00, -5.00)\\
+d_2 & \rightarrow & (4.01, 4.60, 5.46, 6.83, 4.23)\\
+d_3 & \rightarrow & (-1.10, -0.60, -1.46, -1.83, 0.77)\\
+\end{eqnarray*}
+
+The index of the maximum element for each tuple corresponds to the point that has maximum amount of constraint on that line.
+For example, the point the puts the most constraint on the line constructed by $d_1$ is $\mathbf{x}_1$, or, alternatively, the point with coordinates (3,3).
+We can see also that the point the puts the most constraint on the line constructed by $d_2$ is $\mathbf{x}_4$, or, alternatively, the point with coordinates (5,5); and the point the puts the most constraint on the line constructed by $d_3$ is $\mathbf{x}_5$, or, alternatively, the point with coordinates (2,5).
+This is consistent with our tuition, as points $\mathbf{x}_1$, $\mathbf{x}_4$, and $\mathbf{x}_5$ lie on the outside of the ``cluster'' of points.
 
 \subsection{Problem 1c: Solution using MATLAB}
 
@@ -483,7 +506,7 @@ area =
 \begin{figure} \label{fig:triangle}
 	\centering
 	\includegraphics[width=0.75\linewidth]{results-1}
-	\caption{Smallest equilateral triangle to enclose the set of points \{(3,3), (3,4), (4,4), (5,5), (2,5)\}.}
+	\caption{Smallest equilateral triangle to enclose the sequence of points \{(3,3), (3,4), (4,4), (5,5), (2,5)\}.}
 \end{figure}
 
 \end{document}
