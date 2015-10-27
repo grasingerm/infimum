@@ -563,4 +563,76 @@ The cost associated with this solution is $-c_1$.
 
 Because an optimal solution exists for the dual, we know that an optimal solution exists for the primal, and that its cost is equal to $-c_1$ (in the case of the primal LP being in the form: $\min_\mathbf{x} -\mathbf{c}^T \mathbf{x}$). This is true if $x_1 = 1$ and $x_i = 0$ for every $i > 1$. The solution to the primal then is $\mathbf{x} = \begin{bmatrix}1 & 0 & 0 & \dots & 0\end{bmatrix}^T$.
 
+\newpage
+
+\section{Problem 3: Duality}
+
+A newly published algorithm has reported that the following linear program has $\mathbf{x}_0 = \begin{bmatrix} 0 & 1 & 0 & 6 \end{bmatrix}^T$ as the optimal solution.
+
+\begin{align*}
+\text{max} & \hspace{0.1in} x_1 + x_2 + x_3 + 2x_4\\
+\text{subject to} & \hspace{0.1in} x_1 + x_2 \le 2\\
+& \hspace{0.1in} x_3 + x_4 \le 6\\
+& \hspace{0.1in} x_i \ge 0, \forall i
+\end{align*}
+
+\subsection{What is the value of the slack variables in the primal?} \label{sec:slack_primal}
+
+We can arrive at the values of the slack variables by rewriting the constraints as equalities with slack variables and plugging the solution into the constraints. Formally,
+
+\begin{align*}
+0 + 1 + s_1 = 2\\
+0 + 6 + s_2 = 6
+\end{align*}
+
+\noindent where $s_1$ and $s_2$ are the slack variables. Some elementary algebra yields $s_1 = 1$ and $s_2 = 0$.
+
+\subsection{What is the dual for this problem?}
+
+The LP is of the form,
+
+\begin{align*}
+\max_\mathbf{x} & \hspace{0.1in} \mathbf{b}^T \mathbf{x}\\
+\text{subject to} & \hspace{0.1in} \mathbf{A}^T \mathbf{x} \le \mathbf{c}^T\\
+& \hspace{0.1in} x_i \ge 0, \forall i
+\end{align*}
+
+\noindent where, $\mathbf{b} = \begin{bmatrix}1 & 1 & 1 & 2\end{bmatrix}^T$, $\mathbf{A}^T = \left[\begin{smallmatrix}1 & 1 & 0 & 0\\0 & 0 & 1 & 1\end{smallmatrix}\right]$, and $\mathbf{c}^T = \begin{bmatrix} 2 & 6 \end{bmatrix}$.
+
+Its dual is,
+
+\begin{align*}
+\min_{\boldsymbol{\lambda}} & \hspace{0.1in} \mathbf{c}^T \boldsymbol{\lambda}\\
+\text{subject to} & \hspace{0.1in} \mathbf{A} \boldsymbol{\lambda} \ge \mathbf{b}\\
+& \hspace{0.1in} \lambda_i \ge 0, \forall i
+\end{align*}
+
+or alternatively,
+
+\begin{align*}
+\text{min} & \hspace{0.1in} 2\lambda_1 + 6\lambda_2\\
+\text{subject to} & \hspace{0.1in} \lambda_1 \ge 1\\
+& \hspace{0.1in} \lambda_1 \ge 1\\
+& \hspace{0.1in} \lambda_2 \ge 1\\
+& \hspace{0.1in} \lambda_2 \ge 2\\
+& \hspace{0.1in} x_i \ge 0, \forall i
+\end{align*}
+
+\subsection{Solve the dual by inspection}
+
+The solution of the dual is $\lambda_1 = 1$ and $\lambda_2 = 2$.
+
+\subsection{Using complementary slackness, can you tell if the solution $\mathbf{x}_0$ is optimal?}
+
+We can arrive at the values of the slack variables for the dual by the same process we used with the primal (see Section \ref{sec:slack_primal}). Formally,
+
+\begin{align*}
+1 - t_1 = 1\\
+1 - t_2 = 1\\
+2 - t_3 = 1\\
+2 - t_4 = 2
+\end{align*}
+
+\noindent where $t_1$, $t_2$, $t_3$, and $t_4$ are the slack variables. Some elementary algebra yields $t_1 = 0$, $t_2 = 0$, $t_3 = 1$, and $t_4 = 0$.
+
 \end{document}
