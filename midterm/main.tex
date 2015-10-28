@@ -615,14 +615,14 @@ or alternatively,
 & \hspace{0.1in} \lambda_1 \ge 1\\
 & \hspace{0.1in} \lambda_2 \ge 1\\
 & \hspace{0.1in} \lambda_2 \ge 2\\
-& \hspace{0.1in} x_i \ge 0, \forall i
+& \hspace{0.1in} \lambda_i \ge 0, \forall i
 \end{align*}
 
 \subsection{Solve the dual by inspection}
 
 The solution of the dual is $\lambda_1 = 1$ and $\lambda_2 = 2$.
 
-\subsection{Using complementary slackness, can you tell if the solution $\mathbf{x}_0$ is optimal?}
+\subsection{Using complementary slackness, can you tell if the solution $\mathbf{x}_0$ is optimal?} \label{sec:compl_slack}
 
 We can arrive at the values of the slack variables for the dual by the same process we used with the primal (see Section \ref{sec:slack_primal}). Formally,
 
@@ -634,5 +634,50 @@ We can arrive at the values of the slack variables for the dual by the same proc
 \end{align*}
 
 \noindent where $t_1$, $t_2$, $t_3$, and $t_4$ are the slack variables. Some elementary algebra yields $t_1 = 0$, $t_2 = 0$, $t_3 = 1$, and $t_4 = 0$.
+
+A pair of primal and dual solutions $\mathbf{x}$ and $\boldsymbol{\lambda}$ are optimal if and only if $\mathbf{x}^T \mathbf{t} = 0$ and $\boldsymbol{\lambda}^T \mathbf{s} = 0$, where $\mathbf{s}$ and $\mathbf{t}$ are the slack variables for the primal and dual respectively.
+For the given problem, $\mathbf{x}_0^T \mathbf{t} = 0$ and $\boldsymbol{\lambda}^T \mathbf{s} = 1$, hence $\mathbf{x}_0$ and $\boldsymbol{\lambda}$ are not optimal solutions.
+
+\subsection{Using the solution of the dual, find the solution of the primal. Show all the steps.}
+
+A pair of primal and dual solutions $\mathbf{x}$ and $\boldsymbol{\lambda}$ are optimal if and only if $\mathbf{c}^T \mathbf{x} = \boldsymbol{\lambda}^T \mathbf{b}$.
+By inspection, the optimal solution of the dual LP is $\boldsymbol{\lambda} = \begin{bmatrix}1 & 2\end{bmatrix}$, which has a cost of 14.
+Hence, the optimal solution for the primal satisfies the condition $\mathbf{c}^T \mathbf{x} = 14$.
+We can use this to determine the optimal solution of the primal:
+
+\begin{align} \label{eq:primal_const1}
+x_1 + x_2 + x_3 + 2x_4 = 14\\\label{eq:primal_const2}
+x_1 + x_2 \le 2\\\label{eq:primal_const3}
+x_3 + x_4 \le 6\\
+x_i \ge 0, \forall i
+\end{align}
+
+\noindent For any choice of $x_1$ and $x_2$ such that $x_1 + x_2 = 2$ and $x_1, x_2 \ge 0$ the first constraint, (\ref{eq:primal_const2}), is satisfied and the cost function is maximized.
+Plugging $x_1$ and $x_2 $ into (\ref{eq:primal_const1}), the system of equations becomes
+
+\begin{align*}
+x_3 + 2x_4 = 12\\
+x_3 + x_4 \le 6\\
+x_i \ge 0, \forall i
+\end{align*}
+
+\noindent and can only be satisfied if $x_3 = 0$ and $x_4 = 6$. The three possible optimal solutions are $\mathbf{x}_1 = \begin{bmatrix}1 & 1 & 0 & 6\end{bmatrix}^T$, $\mathbf{x}_2 = \begin{bmatrix}2 & 0 & 0 & 6\end{bmatrix}^T$, and $\mathbf{x}_1 = \begin{bmatrix}0 & 2 & 0 & 6\end{bmatrix}^T$.
+The fact that $\mathbf{x}_0$ is not among the optimal solutions agrees with the answer given in Section \ref{sec:compl_slack}. 
+We also find that for $\mathbf{x}_1$, $\mathbf{x}_2$, and $\mathbf{x}_3$, the slack variables, $s_1$ and $s_2$ are equal to zero.
+This gives us $\mathbf{x}_j^T \mathbf{t} = 0$ and $\boldsymbol{\lambda}^T \mathbf{s}_j = 0$ for $j = 1, 2, 3$, satisfying the complementary slackness criteria for optimal solutions.
+
+\newpage
+
+\section{Problem 4: Absolute Value Problem}
+
+Convert the following problem into a linear program and solve using \texttt{linprog}.
+
+\begin{align*}
+\text{min} & \hspace{0.1in} x_1 + |x_2 - x_3|\\
+\text{subject to} & \hspace{0.1in} |x_1 - 3| + |x_2 + 2| \le 7\\
+& \hspace{0.1in} \sqrt{x_3 - x_1} \le 3\\
+\end{align*}
+
+
 
 \end{document}
