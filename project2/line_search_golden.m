@@ -35,12 +35,12 @@ if plot_error
     if y(1) < y(2)
       Es(iters) = y(1);
       range(2) = b;
-      b = 0.62 * (range(2) - range(1));
+      b = 0.62 * (range(2) - range(1)) + range(1);
       y(2) = func_handle(x_0 + b * d);
     else
       Es(iters) = y(2);
       range(1) = a;
-      a = 0.38 * (range(2) - range(1));
+      a = 0.38 * (range(2) - range(1)) + range(1);
       y(1) = func_handle(x_0 + a * d);
     end
 
@@ -55,14 +55,16 @@ if plot_error
   xs = linspace(1, iters, iters);
   plot(xs, Es(1:iters));
 else
-  for iters = 2:max_iters
+  for iters = 1:max_iters-1
     if y(1) < y(2)
+      Es(iters) = y(1);
       range(2) = b;
-      b = 0.62 * (range(2) - range(1));
+      b = 0.62 * (range(2) - range(1)) + range(1);
       y(2) = func_handle(x_0 + b * d);
     else
+      Es(iters) = y(2);
       range(1) = a;
-      a = 0.38 * (range(2) - range(1));
+      a = 0.38 * (range(2) - range(1)) + range(1);
       y(1) = func_handle(x_0 + a * d);
     end
 
