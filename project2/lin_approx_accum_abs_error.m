@@ -8,7 +8,7 @@ function error = lin_approx_accum_abs_error(X, a)
 error = 0;
 rows = size(X, 1);
 for i=1:rows
-    error = error + abs(X(i,2) - a(1)*X(i,1) - a(2));
+  error = error + abs(X(i,2) - a(1)*X(i,1) - a(2));
 end
 
 end

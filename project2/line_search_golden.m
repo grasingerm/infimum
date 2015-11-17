@@ -19,42 +19,54 @@ if nargin < 7
 end
 
 y = zeros(2, 1);
-range = init_range
+range = init_range;
 converged = false;
 
-diff = range(2) - range(1)
-a = 0.38 * diff + range(1)
-b = 0.62 * diff + range(1)
-y(1) = func_handle(x_0 + a * d)
-y(2) = func_handle(x_0 + b * d)
+diff = range(2) - range(1);
+a = 0.38 * diff + range(1);
+b = 0.62 * diff + range(1);
+y(1) = func_handle(x_0 + a * d);
+y(2) = func_handle(x_0 + b * d);
 
 if plot_error
-  Es = zeros(max_iters, 1);
-  
+  ranges(1,:) = init_range;
   for iters = 1:max_iters-1
-    iters
     if y(1) < y(2)
       Es(iters) = y(1);
-      range(2) = b
-      b = 0.62 * (range(2) - range(1)) + range(1)
-      y(2) = func_handle(x_0 + b * d)
+      range(2) = b;
+      b = a;
+      a = 0.38 * (range(2) - range(1)) + range(1);
+      y(2) = y(1);
+      y(1) = func_handle(x_0 + a * d);
     else
       Es(iters) = y(2);
-      range(1) = a
-      a = 0.38 * (range(2) - range(1)) + range(1)
-      y(1) = func_handle(x_0 + a * d)
+      range(1) = a;
+      a = b;
+      b = 0.62 * (range(2) - range(1)) + range(1);
+      y(1) = y(2);
+      y(2) = func_handle(x_0 + b * d);
     end
 
-    if range(2) - range(1) < eps
+    if range(2) - range(1) < eps;
       converged = true;
       break;
     end
+    
+    ranges(iters+1,:) = range;
   end
   
   iters = iters+1;
   Es(iters) = min(y);
   xs = linspace(1, iters, iters);
   plot(xs, Es(1:iters));
+  figure();
+  
+  hold on;
+  for i=1:size(ranges,1)
+    xs = linspace(ranges(i,1), ranges(i,2), 100);
+    ys = ones(100, 1) * i;
+    plot(xs, ys);
+  end
 else
   for iters = 1:max_iters-1
     if y(1) < y(2)
