@@ -32,7 +32,7 @@ if plot_error
   ranges = zeros(50, 2);
   ranges(1,:) = init_range;
   Es = zeros(50, 1);
-  for iters = 1:max_iters-1
+  for iters = 1:max_iters
     if y(1) < y(2)
       Es(iters) = y(1);
       range(2) = b;
@@ -57,17 +57,16 @@ if plot_error
     ranges(iters+1,:) = range;
   end
   
-  iters = iters+1;
-  Es(iters) = min(y);
-  xs = linspace(1, iters, iters);
-  plot(xs, Es(1:iters));
+  Es(iters+1) = min(y);
+  xs = linspace(0, iters, iters+1);
+  plot(xs, Es(1:iters+1));
   title('Error vs. Iterations');
   figure();
   
   hold on;
   for i=1:iters
     xs = linspace(ranges(i,1), ranges(i,2), 100);
-    ys = ones(100, 1) * i;
+    ys = ones(100, 1) * (i-1);
     plot(xs, ys);
   end
   title('Range at each Iteration');
