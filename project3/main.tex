@@ -298,7 +298,7 @@ converged =
 
 	1
 
-Elapsed time is 0.325975 seconds.
+Elapsed time is 0.086444 seconds.
 
 \end{verbatim}
 
@@ -329,5 +329,198 @@ Plots of E at each iteration and the approximate of the solution at each iterati
 	\caption{Path taken by the pattern search. Larger bubbles correspond to earlier approximations.}
 	\label{fig:path}
 \end{figure}
+
+\section{Steepest Descent}
+
+\subsection{Objective}
+
+A solution to the same optimization problem was approximated, but this time using the method of steepest descent.
+
+\subsection{Formulation}
+
+Using the method of steepest descent requires the gradient of the cost function.
+The gradient of the cost function was determined analytically and is given formally as,
+
+\begin{equation*}
+E = \sum_{i=1}^{N} |y_i - ax_i - b| =  \sum_{i=1}^{N} |u_i|, \text{ where } u_i = |y_i - ax_i - b|
+\end{equation*}
+\begin{eqnarray*}
+\frac{\partial E}{\partial a} &= \sum_{i=1}^{N} \frac{\partial u_i}{\partial a} \frac{|u_i|}{u_i} &=  \sum_{i=1}^{N} -x_i \frac{|y_i - ax_i - b|}{y_i - ax_i - b} \\
+\frac{\partial E}{\partial b} &= \sum_{i=1}^{N} \frac{\partial u_i}{\partial b} \frac{|u_i|}{u_i} &=  \sum_{i=1}^{N} - \frac{|y_i - ax_i - b|}{y_i - ax_i - b} \\
+\end{eqnarray*}
+
+and $\nabla E = \begin{bmatrix} \frac{\partial E}{\partial a} & \frac{\partial E}{\partial b} \end{bmatrix}^T$.
+
+\subsection{Source Code}
+
+A function, \texttt{steepest\_descent}, was created in MATLAB with the purpose of minimizing the cost function.
+The function takes a function handle (for the cost function), a function handle for producing the gradient of the cost function, a function handle for line searching, a tolerance at which to terminate the pattern search, a maximum number of iterations for the pattern search, a tolerance at which to terminate a given line search, a maximum number of iterations for a given line search, an initial range of search, and an initial guess at the solution.
+It returns the approximate solution, the number of iterations performed, and whether or not the search converged, as output.
+
+The source code for calculating the gradient of the cost function and searching by steepest descent are as follows.
+
+\vspace{0.25in}
+\begin{lstlisting}
+function grad = lin_approx_accum_abs_error_gradient(X, a)
+%LIN_APPROX_ACCUM_ABS_ERROR_GRADIENT Gradient of linear approximation cost
+%
+%   grad = LIN_APPROX_ACCUM_ABS_ERROR_GRADIENT(X, a)
+%   Gradient of cost function that is calculated by summing absolute values
+%   of differences between a linear approximation given by a(1)*x + a(2) 
+%   and actual data points in two dimensions.
+
+grad = zeros(2, 1);
+
+rows = size(X, 1);
+for i=1:rows
+  error = X(i,2) - a(1)*X(i,1) - a(2);
+  edir = abs(error) / error;
+  grad(1) = grad(1) - X(i,1) * edir;
+  grad(2) = grad(2) - edir;
+end
+
+end
+
+\end{lstlisting}
+
+\vspace{0.25in}
+
+\begin{lstlisting}
+
+function [x, iters, converged] = steepest_descent(cost_func,            ...
+                                                  cost_gradient,        ...
+                                                  line_search_func,     ...
+                                                  steepest_descent_eps, ...
+                                                  steepest_descent_iters,...
+                                                  line_search_eps,      ...
+                                                  line_search_iters,    ...
+                                                  line_search_init_range,...
+                                                  init_guess,           ...
+                                                  plot_error_and_path)
+
+if nargin < 7
+  init_guess = [0; 0];
+end
+
+if nargin < 8
+  plot_error_and_path = false;
+end
+
+search_range    =   line_search_init_range;
+x_k             =   init_guess;
+prev_cost       =   cost_func(x_k);
+converged       =   false;
+E(1)            =   prev_cost;
+points(1,:)     =   x_k;
+
+for iter=1:steepest_descent_iters
+
+  d     =   -cost_gradient(x_k);
+  alpha =   line_search_func(@(a) cost_func(x_k + a * d),           ...
+                             search_range,                          ...
+                             line_search_eps, line_search_iters);
+  x_k   =   x_k + alpha * d;
+  
+  cost_k = cost_func(x_k);
+  E(iter+1)           =   cost_k;
+  points(iter+1, :)   =   x_k;
+  
+  if abs(prev_cost - cost_k) < steepest_descent_eps
+    converged = true;
+    break;
+  end
+  
+  prev_cost           =   cost_k;
+end
+
+iters   =   iter;
+x       =   x_k;
+
+if plot_error_and_path
+  plot(linspace(0, iters, iters+1), E(1:iters+1));
+  title('E vs. iteration');
+  figure();
+  scatter(points(:,1), points(:,2), linspace(250, 25, iters+1));
+  title('Path taken by search');
+end
+
+end
+
+\end{lstlisting}
+
+\subsection{Results}
+
+The script \texttt{main} was appended with code to test the steepest descent algorithm.
+The code added to the script and the resulting output was,
+
+\vspace{0.25in}
+
+\begin{lstlisting}
+cost_gradient           = @(d) lin_approx_accum_abs_error_gradient(X, d);
+steepest_descent_eps    = pattern_search_eps;
+steepest_descent_iters  = pattern_search_iters;
+
+tic();
+[x, iters, converged]   = steepest_descent(dir_base_cf_lambda,      ...
+                                           cost_gradient,           ...
+                                           line_search_lambda,      ...
+                                           steepest_descent_eps,    ...                                         
+                                           steepest_descent_iters,  ...
+                                           line_search_eps,         ...
+                                           line_search_iters,       ...
+                                           line_search_init_range,  ...
+                                           init_guess,              ...
+                                           plot_error)
+toc();
+
+\end{lstlisting}
+
+\vspace{0.25in}
+
+\begin{verbatim}
+x =
+
+    1.9999
+    5.0000
+
+
+iters =
+
+     9
+
+
+converged =
+
+     1
+
+Elapsed time is 0.057958 seconds.
+
+\end{verbatim}
+
+\vspace{0.25in}
+
+\subsubsection{Plot the value of E at each iteration}
+
+Plots of E at each iteration and the approximate of the solution at each iteration can be seen in Figures \ref{fig:error-sd} and \ref{fig:path-sd}, respectively.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.75\linewidth]{E-vs-iteration-sd}
+	\caption{Minimum value of cost function after each iteration for the method of steepest descent}
+	\label{fig:error-sd}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.75\linewidth]{path-taken-by-search-sd}
+	\caption{Path taken by the method of steepest descent. Larger bubbles correspond to earlier approximations.}
+	\label{fig:path-sd}
+\end{figure}
+
+\subsubsection{Comparison}
+
+Although the method of steepest descent required more iterations, the method was faster overall (for this particular problem and on my PC's hardware).
+This was probably due to the fact that the pattern search method required three line searches per iteration instead of one.
+If an analytical solution to the gradient of the cost function was not available and the gradient was instead approximated numerically, this could have slowed convergence and possibly made each iteration of the method of steepest descent more costly.
 
 \end{document}
