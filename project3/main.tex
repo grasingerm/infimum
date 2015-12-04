@@ -18,8 +18,8 @@
 	\newpage
 }
 
-\title{Optimization Methods, Project 2}
-\date{2015/11/18}
+\title{Optimization Methods, Project 3}
+\date{2015/12/09}
 \author{Matthew Grasinger}
 
 \begin{document}
@@ -47,11 +47,11 @@
 \newpage
 \pagenumbering{arabic}
 
-\section{Line Search: Golden Section}
+\section{Pattern Search}
 
 \subsection{Objective}
 
-The goal is to find the optimal step size given a current estimate of the parameters and a desired direction to explore.
+The goal is to minimize the cost function using pattern search.
 Given $N$ points, the cost function that we are aiming to minimize is given by,
 
 \begin{equation}
@@ -61,7 +61,9 @@ E = \sum_{i = 1}^{N} |y_i - a x_i - b|
 \noindent where $x_i$ and $y_i$ are the coordinates of the $i^{th}$ point and $a$ and $b$ are the parameters over which the cost function is being minimized.
 
 The points can be found in Table \ref{table:points}.
-The initial guess and direction of search are $\mathbf{a_0} = \begin{bmatrix} 1 & 1 \end{bmatrix}^T$ and $\mathbf{d} = \begin{bmatrix} 2 & 1 \end{bmatrix}^T$, respectively.
+The initial guess is $\mathbf{a_0} = \begin{bmatrix} 1 & 1 \end{bmatrix}^T$.
+The pattern search is to be implemented using the positive basis $\begin{bmatrix} 1 \\ 0 \end{bmatrix}$, $\begin{bmatrix} 0 \\ 1 \end{bmatrix}$, and $\begin{bmatrix} -1 \\ -1 \end{bmatrix}$.
+The optimal step size for each iteration of the search will be found using the method of golden section.
 
 \begin{table}
 \centering
@@ -81,140 +83,153 @@ The initial guess and direction of search are $\mathbf{a_0} = \begin{bmatrix} 1 
 
 \subsection{Source Code}
 
-A function, \texttt{line\_search\_golden}, was created in MATLAB with the purpose of searching for the minimum of a unimodal, scalar function.
-The function takes a function handle (for the function to be minimized), an initial range of search, a tolerance for which to search to, and a maximum number of iterations as input.
-It returns the approximate minimum, the final range, the number of iterations performed, and whether or not the search converged, as output.
+A function, \texttt{pattern\_search}, was created in MATLAB with the purpose of minimizing the cost function.
+The function takes a function handle (for the cost function), a function handle for line searching, a tolerance at which to terminate the pattern search, a maximum number of iterations for the pattern search, a tolerance at which to terminate a given line search, a maximum number of iterations for a given line search, an initial range of search, an initial guess at the solution, and a positive basis with which to pattern search with.
+It returns the approximate solution, the number of iterations performed, and whether or not the search converged, as output.
 
-The cost function to be minimized was imlemented in terms of a MATLAB function, \linebreak \texttt{lin\_approx\_accum\_abs\_error}.
-
-The source code for both functions are what follows.
+The source code for the pattern search function is as follows.
 
 \vspace{0.25in}
 \begin{lstlisting}
-%% line_search_golden.m
+%% pattern_search.m
 
-function [alpha, range, iters, converged] = ...
-  line_search_golden(func_handle, init_range, eps, max_iters, plot_error)
-%LINE_SEARCH_GOLDEN Perform line search using method of golden section
+function [x, iters, converged] = pattern_search(cost_func,             ... 
+                                                line_search_func,      ...
+                                                pattern_search_eps,    ...
+                                                pattern_search_iters,  ...
+                                                line_search_eps,       ...
+                                                line_search_iters,     ...
+                                                line_search_init_range,...
+                                                init_guess,            ... 
+                                                pattern_basis,         ...
+                                                plot_error_and_path)
+
+%PATTERN_SEARCH Perform a pattern search given a basis and line search
 %
-%   [alpha, range, iters, converged] = LINE_SEARCH_GOLDEN(func_handle, ...
-%                                                         init_range,  ...
-%                                                         eps,         ...
-%                                                         max_iters,   ...
-%                                                         plot_error)
+%   [x, iters, converged] = PATTERN_SEARCH(cost_func, line_search_func, ...
+%                                          pattern_search_eps,          ...
+%                                          pattern_search_iters,        ...
+%                                          line_search_eps,             ...
+%                                          line_search_iters,           ...
+%                                          line_search_init_range)
 %
-%   Line search using method of golden section until the range is smaller 
-%   than the tolerance provided by the input eps, or until the maximum 
-%   number of iterations has been reached. Cost function is given by the 
-%   handle func_handle.
+%   Pattern search assuming a 2D space and using a positive basis of
+%   [1; 0], [0; 1], and [-1; -1]. Min cost until the tolerance given by 
+%   pattern_search_eps is met or the number of iterations given by
+%   pattern_search_iters is exceeded. Line search for optimal step size
+%   at each iteration using the line_search_func, governed by
+%   line_search_eps and line_search_iters.
+%
+%   [x, iters, converged] = PATTERN_SEARCH(cost_func, line_search_func, ...
+%                                          pattern_search_eps,          ...
+%                                          pattern_search_iters,        ...
+%                                          line_search_eps,             ...
+%                                          line_search_iters,           ...
+%                                          line_search_init_range,      ...
+%                                          init_guess)
+%
+%   Pattern search assuming a 2D space and using a positive basis of
+%   [1; 0], [0; 1], and [-1; -1]. Min cost until the tolerance given by 
+%   pattern_search_eps is met or the number of iterations given by
+%   pattern_search_iters is exceeded. Line search for optimal step size
+%   at each iteration using the line_search_func, governed by
+%   line_search_eps and line_search_iters.
+%
+%   [x, iters, converged] = PATTERN_SEARCH(cost_func, line_search_func, ...
+%                                          pattern_search_eps,          ...
+%                                          pattern_search_iters,        ...
+%                                          line_search_eps,             ...
+%                                          line_search_iters,           ...
+%                                          line_search_init_range,      ...
+%                                          init_guess, pattern_basis)
+%
+%   Pattern search assuming a 2D space and using a positive basis given by
+%   the columns of pattern_basis. Min cost until the tolerance given by 
+%   pattern_search_eps is met or the number of iterations given by
+%   pattern_search_iters is exceeded. Line search for optimal step size
+%   at each iteration using the line_search_func, governed by
+%   line_search_eps and line_search_iters.
+%
+%   [x, iters, converged] = PATTERN_SEARCH(cost_func, line_search_func, ...
+%                                          pattern_search_eps,          ...
+%                                          pattern_search_iters,        ...
+%                                          line_search_eps,             ...
+%                                          line_search_iters,           ...
+%                                          line_search_init_range,      ...
+%                                          init_guess, pattern_basis,   ...
+%                                          plot_error_and_path)
+%
+%   Pattern search assuming a 2D space and using a positive basis given by
+%   the columns of pattern_basis. Min cost until the tolerance given by 
+%   pattern_search_eps is met or the number of iterations given by
+%   pattern_search_iters is exceeded. Line search for optimal step size
+%   at each iteration using the line_search_func, governed by
+%   line_search_eps and line_search_iters. If plot_error_and_path is true, plot
+%   the error for each iteration and the path taken by the search.
 
-rho = (sqrt(5) - 1) / 2;
-
-if nargin < 5
-  plot_error = false;
+if nargin < 7
+  init_guess = [0; 0];
 end
 
-y = zeros(2, 1);
-range = init_range;
-converged = false;
+if nargin < 8
+  pattern_basis = [1 0 -1;
+                   0 1 -1];
+else
+  assert(size(pattern_basis, 1) == length(init_guess));
+end
 
-a = range(2) - rho * (range(2) - range(1));
-b = range(1) + rho * (range(2) - range(1));
-y(1) = func_handle(a);
-y(2) = func_handle(b);
+if nargin < 9
+  plot_error_and_path = false;
+end
 
-if plot_error
-  ranges = zeros(50, 2);
-  ranges(1,:) = init_range;
-  Es = zeros(50, 1);
-  for iters = 1:max_iters
-    if y(1) < y(2)
-      Es(iters) = y(1);
-      range(2) = b;
-      b = a;
-      a = range(2) - rho * (range(2) - range(1));
-      y(2) = y(1);
-      y(1) = func_handle(a);
-    else
-      Es(iters) = y(2);
-      range(1) = a;
-      a = b;
-      b = range(1) + rho * (range(2) - range(1));
-      y(1) = y(2);
-      y(2) = func_handle(b);
+search_range    =   line_search_init_range;
+ndirs           =   size(pattern_basis, 2);
+x_k             =   init_guess;
+prev_cost       =   Inf;
+converged       =   false;
+E(1)            =   cost_func(x_k);
+points(1,:)     =   x_k;
+
+for iter=1:pattern_search_iters
+
+  alphas              =   zeros(ndirs, 1);
+  min_j               =   1;
+  min_cost            =   Inf;
+
+  for j=1:ndirs
+    scalar_cost_func = @(a) cost_func(x_k + a * pattern_basis(:, j)); 
+    alphas(j) = line_search_func(scalar_cost_func, search_range, ...
+                                 line_search_eps, line_search_iters);
+
+    cost_j = scalar_cost_func(alphas(j));
+    if cost_j < min_cost
+      min_cost = cost_j;
+      min_j = j;
     end
+  end
 
-    if range(2) - range(1) < eps;
-      converged = true;
-      break;
-    end
-    
-    ranges(iters+1,:) = range;
+  E(iter+1)           =   min_cost;
+  x_k                 =   x_k + alphas(min_j) * pattern_basis(:, min_j);
+  points(iter+1, :)   =   x_k;
+
+  if abs(prev_cost - min_cost) < line_search_eps
+    converged = true;
+    break;
   end
   
-  Es(iters+1) = min(y);
-  xs = linspace(0, iters, iters+1);
-  plot(xs, Es(1:iters+1));
-  title('Error vs. Iterations');
+  search_range(2)     =   alphas(min_j);
+  prev_cost           =   min_cost;
+end
+
+iters   =   iter;
+x       =   x_k;
+
+if plot_error_and_path
+  plot(linspace(0, iters, iters+1), E(1:iters+1));
+  title('E vs. iteration');
   figure();
-  
-  hold on;
-  for i=1:iters
-    xs = linspace(ranges(i,1), ranges(i,2), 100);
-    ys = ones(100, 1) * (i-1);
-    plot(xs, ys);
-  end
-  title('Range at each Iteration');
-else
-  for iters = 1:max_iters-1
-    if y(1) < y(2)
-      range(2) = b;
-      b = a;
-      a = range(2) - rho * (range(2) - range(1));
-      y(2) = y(1);
-      y(1) = func_handle(a);
-    else
-      range(1) = a;
-      a = b;
-      b = range(1) + rho * (range(2) - range(1));
-      y(1) = y(2);
-      y(2) = func_handle(b);
-    end
-
-    if range(2) - range(1) < eps;
-      converged = true;
-      break;
-    end
-  end
-end
-
-if y(1) < y(2)
-  alpha = a;
-else
-  alpha = b;
-end
-
-end
-
-
-\end{lstlisting}
-
-\vspace{0.25in}
-
-\begin{lstlisting}
-%% lin_approx_accum_abs_error.m
-
-function error = lin_approx_accum_abs_error(X, a)
-%LIN_APPROX_ACCUM_ABS_ERROR Accumulated absolute error for line of fit
-%
-%   error = LIN_APPROX_ACCUM_ABS_ERROR(X, a)
-%   Sum of absolute values of differences between a linear approximation
-%   given by a(1)*x + a(2) and actual data points in two dimensions
-
-error = 0;
-rows = size(X, 1);
-for i=1:rows
-  error = error + abs(X(i,2) - a(1)*X(i,1) - a(2));
+  scatter(points(:,1), points(:,2), linspace(250, 25, iters+1));
+  title('Path taken by search');
 end
 
 end
@@ -225,46 +240,65 @@ end
 
 \subsection{Results}
 
-The code executed and the resulting output of the \texttt{line\_search\_golden} function was,
+A script \texttt{main} was created and run.
+The script and the resulting output was,
+
+\vspace{0.25in}
+
+\begin{lstlisting}
+X                       = csvread('points.csv');
+dir_base_cf_lambda      = @(d) lin_approx_accum_abs_error(X, d);
+line_search_lambda      = @(func_handle, init_range, eps, max_iters)    ...
+                            line_search_golden(func_handle, init_range, ...
+                                               eps, max_iters, false); 
+pattern_search_eps      = 1e-4;
+pattern_search_iters    = 7;
+line_search_eps         = 1e-4;
+line_search_iters       = 100;
+line_search_init_range  = [0; 8];
+init_guess              = [1; 1];
+pattern_basis           = [
+                            1   0   -1;
+                            0   1   -1
+                          ];
+plot_error              = true;
+
+tic();
+[x, iters, converged]   = pattern_search(dir_base_cf_lambda,      ...
+                                         line_search_lambda,      ...
+                                         pattern_search_eps,      ...
+                                         pattern_search_iters,    ...
+                                         line_search_eps,         ...
+                                         line_search_iters,       ...
+                                         line_search_init_range,  ...
+                                         init_guess,              ...
+                                         pattern_basis,           ...
+                                         plot_error)
+toc();
+
+\end{lstlisting}
 
 \vspace{0.25in}
 
 \begin{verbatim}
->> X = csvread('points.csv')
+>> main
 
-X =
+x =
 
--2     1
--1     3
-0     5
-1     7
-2     9
-
->> x_0 = [1; 1];
->> d = [2; 1];
->> [alpha, range, iters, converged] = line_search_golden(...
-     @(a) lin_approx_accum_abs_error(X, x_0 + a*d), ...
-     [0; 2], 1e-4, 1000, true)
-
-alpha =
-
-1.2000
-
-
-range =
-
-1.2000
-1.2001
+	2.0000
+	5.0000
 
 
 iters =
 
-21
+	3
 
 
 converged =
 
-1
+	1
+
+Elapsed time is 0.325975 seconds.
 
 \end{verbatim}
 
@@ -274,44 +308,26 @@ converged =
 
 The new estimate of the parameters is,
 
-\begin{eqnarray*}
-\mathbf{a} &= \begin{bmatrix} a \\ b \end{bmatrix} &= \mathbf{x_0} + \alpha \mathbf{d} \\
-&&= \begin{bmatrix} 1 \\ 1 \end{bmatrix} + 1.2 \begin{bmatrix} 2 \\ 1 \end{bmatrix} \\
-&&= \begin{bmatrix} 3.4 \\ 2.2 \end{bmatrix}
-\end{eqnarray*}
-
-\subsubsection{How many iterations did you expect to perform? How many did you end up needing?}
-
-The golden ratio is given by $\phi = \frac{1 + \sqrt{5}}{2}$.
-Line searching by golden section shrinks the range of search by $\phi-1$ after each iteration.
-In order to narrow the range to less than or equal to $10^{-4}$ in length, the number of iterations expected to be performed are,
-
-\begin{eqnarray*}
-2 (\phi - 1)^N &=& 10^{-4} \\
-\log(2) + N \log(\phi-1) &=& -4\\
-N &=& \frac{-4 - \log(2)}{\log(\phi-1)}\\
-N &=& 20.58
-\end{eqnarray*}
-
-\noindent where $N$ is the number of iterations.
-Rounding up, $N$ becomes 21, which is exactly the number of iterations performed in the search.
+\begin{equation*}
+\mathbf{a} = \begin{bmatrix} 2 \\ 5 \end{bmatrix}
+\end{equation*}
 
 \subsubsection{Plot the value of E at each iteration}
 
-Plots of E at each iteration and the range of search at each iteration can be seen in Figures \ref{fig:error} and \ref{fig:range}, respectively.
+Plots of E at each iteration and the approximate of the solution at each iteration can be seen in Figures \ref{fig:error} and \ref{fig:path}, respectively.
 
 \begin{figure}
 	\centering
-	\includegraphics[width=0.75\linewidth]{error-vs-iterations}
+	\includegraphics[width=0.75\linewidth]{E-vs-iteration}
 	\caption{Minimum value of cost function after each iteration}
 	\label{fig:error}
 \end{figure}
 
 \begin{figure}
 	\centering
-	\includegraphics[width=0.75\linewidth]{range-at-each-iteration}
-	\caption{Range at search for each iteration (y-value is the iteration number)}
-	\label{fig:range}
+	\includegraphics[width=0.75\linewidth]{path-taken-by-search}
+	\caption{Path taken by the pattern search. Larger bubbles correspond to earlier approximations.}
+	\label{fig:path}
 \end{figure}
 
 \end{document}
