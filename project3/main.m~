@@ -46,11 +46,4 @@ tic();
 toc();
 
 figure();
-
-x0 = min(X(:,1));
-x1 = max(X(:,1));
-xs = linspace(x0, x1, 1000);
-ys = x(1) * xs + x(2);
-scatter(X(:,1), X(:,2));
-hold on;
-plot(xs, ys);
+x0 = min(X(:
