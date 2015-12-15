@@ -1,0 +1,257 @@
+\documentclass{article}
+
+\usepackage{mathtools}
+\usepackage{bm}
+\usepackage[margin=1.25in]{geometry}
+\usepackage{courier}
+\usepackage{color}
+\usepackage{listings}
+\usepackage{pdfpages}
+\usepackage{enumerate}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+
+\newcommand{\blankpage}{
+	\newpage
+	\thispagestyle{empty}
+	\mbox{}
+	\newpage
+}
+
+\newcommand{\exspace}{\hspace{0.1in}}
+
+\title{Optimization Methods, Final Exam}
+\date{2015/12/16}
+\author{Matthew Grasinger}
+
+\begin{document}
+	
+\lstset{language=Matlab,
+	keywords={break,case,catch,continue,else,elseif,end,for,function,
+		global,if,otherwise,persistent,return,switch,try,while},
+	basicstyle=\ttfamily,
+	keywordstyle=\color{blue},
+	commentstyle=\color{gray},
+	stringstyle=\color{dkgreen},
+	numbers=left,
+	numberstyle=\tiny\color{red},
+	stepnumber=1,
+	numbersep=10pt,
+	backgroundcolor=\color{white},
+	tabsize=4,
+	showspaces=false,
+	showstringspaces=false}
+	
+\pagenumbering{gobble}
+\maketitle
+\blankpage
+\tableofcontents
+\blankpage
+\pagenumbering{arabic}
+
+\section{Problem 1} \label{sec:smallest_circle}
+
+\subsection{Objective}
+
+Find the center and radius of the smallest circle that encompasses the following points: $(0,1)$, $(1,0)$, $(1,1)$, $(0,0)$, and whose center lies along the line $y=2x$.
+
+\subsection{Approach 1}
+
+\begin{enumerate}[a)]
+
+\item Express the problem as a constrained minimization problem.
+
+The general equation of a circle can be given as,
+\begin{equation} \label{eq:circle_general}
+(x - c_x)^2 + (y - c_y)^2 = r^2,
+\end{equation}
+where $c_x$ and $c_y$ are the $x$ and $y$ coordinates of the center of the circle respectively, and $r$ is the radius of the circle.
+The area of a circle is proportional to its radius squared.
+Minimizing $r^2$ will be sufficient for finding the smallest circle that encompasses the given points.
+By substituting the constraint on the center of the circle into Equation \ref{eq:circle_general}, we obtain the desired constrained minimization formulation,
+
+\begin{align*}
+\min_{r, c_x} \exspace & r^2 \\
+\text{such that} \exspace & (x_i - c_x)^2 + (y_i - 2c_x)^2 - r^2 \le 0, \exspace \forall i = 1, 2, ..., n
+\end{align*}
+
+\item Find the optimality conditions.
+
+The optimality conditions for constrained optimization are given by the so-called KKT conditions.
+The KKT conditions for the smallest circle problem are,
+
+\begin{eqnarray*}
+\mathbf{\nabla} f(\mathbf{x}) + \sum_{i}^{n} \mu_i \mathbf{\nabla} g_i(\mathbf{x}) &=& \mathbf{0}, \\
+\begin{bmatrix}2r \\ 0\end{bmatrix} + \sum_{i}^{n} \mu_i \begin{bmatrix}-2r \\ -2(x_i - c_x) - 4(y_i - 2c_x)\end{bmatrix} &=& \mathbf{0}
+\end{eqnarray*}
+
+\item Solve the optimality conditions algebraically for the optimal values.
+
+
+
+\item Interpret the meaning of the Lagrange multipliers.
+
+
+
+\item Is the solution unique?
+
+\end{enumerate}
+
+
+%--- scratch --------- %
+
+Two functions were written in order to solve the smallest triangle problem.
+The first was the main function, \texttt{min\_triangle}, which takes a path to a comma separated value (CSV) file as its input and returns $\mathbf{u}$, $d_1$, $d_2$, $d_3$, and the area of the triangle as its output.
+The format of the CSV is such that each line contains the coordinates of one of the \textit{n} points, and the coordinates are separated by a comma:
+
+\begin{align*}
+x_{11}, & \hspace{0.1in} x_{12}\\
+x_{21}, & \hspace{0.1in} x_{22}\\
+\vdots & \hspace{0.1in} \vdots\\
+x_{n1}, & \hspace{0.1in} x_{n2}
+\end{align*}
+
+\noindent If the \texttt{do\_plot} flag that is passed to \texttt{min\_triangle} is true, the function also plots the points given by the CSV and the smallest triangle that encloses them.
+The plot helps verify that the solution satisfies the constraints.
+This function was run with the sequence of points $\{(3,3), (3,4), (4,4), (5,5), (2,5)\}$ stored in the CSV.
+
+The second function, \texttt{plot\_triangle}, takes $d_1$, $d_2$, and $d_3$ as input and plots an equilateral triangle (using equations (\ref{eq:d1})--(\ref{eq:d3})).
+It acts as a helper function for \texttt{min\_triangle}.
+
+\subsubsection{Source Code}
+\vspace{0.25in}
+\begin{lstlisting}
+%% min_triangle.m
+
+function [x, d1, d2, d3, area] = min_triangle(filename, R1, C1, do_plot)
+%MIN_TRIANGLE Finds min equilateral triangle that encloses given points.
+%
+%   [x, d1, d2, d3, area] = MIN_TRIANGLE(filename) finds the smallest
+%   equilateral triangle that encloses the set of points contained in 
+%   the csv file given by filename. Plots points and resulting triangle.
+%
+%   [x, d1, d2, d3, area] = MIN_TRIANGLE(filename, R1, C1) finds the 
+%	smallest equilateral triangle that encloses the set of points 
+%	contained in the csv file given by filename. Skips first R1 rows and
+%	C1 columns of csv. Plots points and resulting triangle.
+%
+%   [x, d1, d2, d3, area] = MIN_TRIANGLE(filename, R1, C1, do_plot) 
+%	finds the smallest equilateral triangle that encloses the set of 
+%	points contained in the csv file given by filename. Skips first R1 
+%	rows and C1 columns of csv. If do_plot is true, plots points and 
+%	resulting triangle, else no plot is created.
+
+  validateattributes(filename, {'char','cell'}, {'nonempty'});
+  
+  if nargin < 3
+    R1 = 0;
+    C1 = 0;
+  end
+  
+  if nargin < 4
+    do_plot = true;
+  end
+  
+  % equations of lines
+  a = [0 1; sqrt(3)/2 1/2; -sqrt(3)/2 1/2];
+  
+  % read points in from csv file
+  X = csvread(filename, R1, C1);
+  
+  % constraints: A * x \leq b
+  % d1, d2, d3 = u1 - v1, u2 - v2, u3 - v3
+  num_points = size(X, 1);
+  A = zeros(3*num_points, 3*num_points+6);
+  b = zeros(3*num_points, 1);
+  LB = zeros(1, 3*num_points+6);
+  UB(1, 1:3*num_points+6) = Inf;
+  
+  for i=1:num_points
+    A(3*i-2,    1:2)   = [1 -1];
+    A(3*i-1,    3:4)   = [1 -1];
+    A(3*i,      5:6)   = [1 -1];
+    A(3*i-2,    3*i+4) =  1;
+    A(3*i-1,    3*i+5) = -1;
+    A(3*i,      3*i+6) = -1;
+    b(3*i-2:3*i)       = a * transpose(X(i,:));
+  end
+  
+  % x = [d1; d2; d3]  = [u1; v1; u2; v2; u3; v3];
+  % f = [-1; 1; 1]    = [-1; 1; 1; -1; 1; -1];
+  f = zeros(3*num_points + 6, 1);
+  f(1:6) = [-1; 1; 1; -1; 1; -1];
+  x = linprog(f, [], [], A, b, LB, UB);
+  
+  d1 = x(1) - x(2);
+  d2 = x(3) - x(4);
+  d3 = x(5) - x(6);
+  
+  area = sqrt(3) / 3 * (-d1 + d2 + d3)^2;
+  
+  if do_plot
+    scatter(X(:,1), X(:,2))
+    hold on
+    plot_triangle(d1, d2, d3);
+  end
+
+end
+\end{lstlisting}
+
+\subsubsection{Results}
+
+The output of the \texttt{min\_triangle} function was
+
+\vspace{0.25in}
+\hrule
+
+\begin{verbatim}
+>> [x, d1, d2, d3, area] = min_triangle('points.csv')
+Optimization terminated.
+
+x =
+
+  234.1260
+  231.1260
+  225.3782
+  218.5481
+  229.3384
+  228.5705
+  0.0000
+  2.7321
+  1.8660
+  1.0000
+  2.2321
+  1.3660
+  1.0000
+  1.3660
+  2.2321
+  2.0000
+  0.0000
+  2.5981
+  2.0000
+  2.5981
+  0.0000
+
+
+d1 =
+
+  3.0000
+
+
+d2 =
+
+  6.8301
+
+
+d3 =
+
+  0.7679
+
+
+area =
+
+  12.2065
+\end{verbatim}
+
+\end{document}
