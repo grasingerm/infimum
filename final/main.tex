@@ -72,32 +72,130 @@ Minimizing $r^2$ will be sufficient for finding the smallest circle that encompa
 By substituting the constraint on the center of the circle into Equation \ref{eq:circle_general}, we obtain the desired constrained minimization formulation,
 
 \begin{align*}
-\min_{r, c_x} \exspace & r^2 \\
-\text{such that} \exspace & (x_i - c_x)^2 + (y_i - 2c_x)^2 - r^2 \le 0, \exspace \forall i = 1, 2, ..., n
+\min_{r, c_x} \exspace & r^2, \\
+\text{such that} \exspace & (x_i - c_x)^2 + (y_i - 2c_x)^2 - r^2 \le 0, \\
+& \forall i = 1, 2, ..., n.
 \end{align*}
 
 \item Find the optimality conditions.
 
-The optimality conditions for constrained optimization are given by the so-called KKT conditions.
-The KKT conditions for the smallest circle problem are,
+The KKT optimality conditions for the smallest circle problem are,
 
 \begin{eqnarray*}
-\mathbf{\nabla} f(\mathbf{x}) + \sum_{i}^{n} \mu_i \mathbf{\nabla} g_i(\mathbf{x}) &=& \mathbf{0}, \\
-\begin{bmatrix}2r \\ 0\end{bmatrix} + \sum_{i}^{n} \mu_i \begin{bmatrix}-2r \\ -2(x_i - c_x) - 4(y_i - 2c_x)\end{bmatrix} &=& \mathbf{0}
+\boldsymbol{\nabla} f(\mathbf{x}) + \sum_{i}^{n} \mu_i \boldsymbol{\nabla} g_i(\mathbf{x}) &=& \mathbf{0},\\
+\begin{bmatrix}2r \\ 0\end{bmatrix} + \sum_{i}^{n} \mu_i \begin{bmatrix}-2r \\ -2(x_i - c_x) - 4(y_i - 2c_x)\end{bmatrix} &=& \mathbf{0},
 \end{eqnarray*}
+
+and,
+
+\begin{eqnarray*}
+\sum_{i}^{n} \mu_i g_i(\mathbf{x}) &=& 0,\\
+\sum_{i}^{n} \mu_i \left[(x_i - c_x)^2 + (y_i - 2c_x)^2 - r^2\right] &=& 0,
+\end{eqnarray*}
+
+and lastly,
+
+\begin{equation*}
+	\mathbf{\mu} = \mathbf{0}.
+\end{equation*}
+
+%The second order sufficient condition is that
+
+%\begin{eqnarray*}
+%	\mathbf{L}(\mathbf{x}) &=& \mathbf{F}(\mathbf{x}) + \boldsymbol{\mu}^T\mathbf{G}(\mathbf{x}),\\
+%	&=& \begin{bmatrix}2 & 0\\0 & 0\end{bmatrix} + \boldsymbol{\mu}^T \begin{bmatrix}-2 & 0\\0 & 10\end{bmatrix},
+%\end{eqnarray*}
+
+%is a positive definite matrix.
 
 \item Solve the optimality conditions algebraically for the optimal values.
 
+The KKT conditions give the following system of equations,
 
+\begin{eqnarray}	
+	\mu_1 + \mu_2 + \mu_3 + \mu_4 &=& 1, \label{eq:kkt1}\\
+	10c_x(\mu_1 + \mu_2 + \mu_3 + \mu_4) - 4\mu_1 - 2\mu_2 - 6\mu_3 &=& 0, \label{eq:kkt2}\\
+	\mu_1 \left[5c_x^2 - 4c_x + 1 -r^2\right] &=& 0, \label{eq:kkt3}\\
+	\mu_2 \left[5c_x^2 - 2c_x + 1 -r^2\right] &=& 0, \label{eq:kkt4}\\
+	\mu_3 \left[5c_x^2 - 6c_x + 2 -r^2\right] &=& 0, \label{eq:kkt5}\\
+	\mu_4 \left[5c_x^2 -r^2\right] &=& 0, \label{eq:kkt6}\\
+	\mu_1 &\ge& 0, \\
+	\mu_2 &\ge& 0, \\
+	\mu_3 &\ge& 0, \\
+	\mu_4 &\ge& 0, \\
+	5c_x^2 - 4c_x + 1 -r^2 &\le& 0, \label{eq:ineq1}\\
+	5c_x^2 - 2c_x + 1 -r^2 &\le& 0, \label{eq:ineq2}\\
+	5c_x^2 - 6c_x + 2 -r^2 &\le& 0, \label{eq:ineq3}\\
+	5c_x^2 -r^2 &\le& 0. \label{eq:ineq4}
+\end{eqnarray}
+
+In order to solve for the optimal values, we must make assumptions about which constraints are active and which are inactive.
+It is clear by inspection of Equation \ref{eq:kkt1} that at least one constraint must be active, and so there is no need to check the possibility of no active constraints.
+This is consistent with intuition because if there were no active constraints the solution would trivially be a circle with radius zero centered anywhere on the line $y=2x$.
+
+If we assume all of the constraints are active then the inequalities given by Equations \ref{eq:ineq1}--\ref{eq:ineq4} become equality constraints.
+Subtracting Equation \ref{eq:ineq1} from Equation \ref{eq:ineq2} shows that to satisfy both equations, $c_x$ must equal 0.
+Plugging $c_x = 0$ into Equation \ref{eq:ineq1} and solving for the radius of the circle yields $r = 1$.
+However, plugging $c_x = 0$ into Equation \ref{eq:ineq3} results in, $2 - r^2 \le 0$ which is not true.
+This implies the assumption that all constraints are active is not true.
+Moreover, this shows that the constraints imposed by the first and second points cannot both be active for solution to be optimal.
+
+Next, let us assume that the constraints imposed by the first point, $(0,1)$, and third point, $(1,1)$, are the only active constraints.
+Subtracting Equation \ref{eq:ineq1} from \ref{eq:ineq3} results in $-2c_x + 1 = 0$, or $c_x = 1/2$.
+Plugging $c_x = 1/2$ into Equation \ref{eq:ineq1} and solving for the radius of the circle yields $r = 1/2$.
+However, $c_x = r = 1/2$ does not satisfy the constraint given by Equation \ref{eq:ineq2}.
+This implies the assumption that the constraints imposed by the first and third points are active constraints is not true.
+
+Next, let us assume that the constraints imposed by the second point, $(1,0)$, and third point, $(1,1)$, are the only active constraints.
+Subtracting Equation \ref{eq:ineq2} from \ref{eq:ineq3} results in $-4c_x + 1 = 0$, or $c_x = 1/4$.
+Plugging $c_x = 1/4$ into Equation \ref{eq:ineq2} and solving for the radius of the circle yields $r = \sqrt{13}/4$.
+The values $c_x = 1/2$ and $r = \sqrt{13}/4$ satisfy Equations \ref{eq:ineq1}--\ref{eq:ineq4} as desired.
+Since $\mu_1 = \mu_4 = 0$, Equations \ref{eq:kkt1} and \ref{eq:kkt2} become: 
+
+\begin{eqnarray*}
+	\mu_2 + \mu_3 &=& 1,\\
+	5/2 - 2\mu_2 - 6\mu_3 &=& 0.
+\end{eqnarray*}
+
+Solving the system of equations yields $\mu_2 = 7/8$ and $\mu_3 = 1/8$.
+
+The values $\mu_1 = \mu_4 = 0$, $\mu_2 = 7/8$, $\mu_3 = 1/8$, $c_x = 1/4$, and $r = \sqrt{13}/4$ satisfy the KKT conditions.
+
+%Intuition might lead us to consider the constraints imposed by the third and fourth points because the distance between these two points is $\sqrt{2}$ and is greater than or equal to the distance between any other pair of points.
+%Subtracting Equation \ref{eq:ineq4} from \ref{eq:ineq3} results in $-6c_x + 2 = 0$, or $c_x = 1/3$.
+%Plugging $c_x = 1/3$ into Equation \ref{eq:ineq3} and solving for the radius of the circle yields $r = \sqrt{5}/3$.
+%The values $c_x = 1/3$ and $r = \sqrt{5}/3$ satisfy Equation \ref{eq:ineq1}, but not Equation \ref{eq:ineq2}.
+%This implies the assumption that the constraints imposed by the first and third points are active constraints is not true.
+
+%Lastly, the optimal solution can be found by considering the constraints imposed by the second and fourth points.
+%Subtracting Equation \ref{eq:ineq4} from \ref{eq:ineq2} results in $-2c_x + 1 = 0$, or $c_x = 1/2$.
+%Plugging $c_x = 1/2$ into Equation \ref{eq:ineq4} and solving for the radius of the circle yields $r = \sqrt{5}/2$.
+%The values $c_x = 1/2$ and $r = \sqrt{5}/2$ satisfy Equations \ref{eq:ineq1}--\ref{eq:ineq4} as desired.
+%Since $\mu_1 = \mu_3 = 0$, Equation \ref{eq:kkt2} becomes $5 - 2\mu_2 = 0$ or $\mu_2 = 5/2$.
 
 \item Interpret the meaning of the Lagrange multipliers.
 
-
+The magnitude of the Lagrange multipliers represents the relative amount of constraint that each active constraint enforces on the optimal solution, i.e. because $\mu_2 = 7/8 > 1/8 = \mu_3$, if the second point is removed (or no longer requires being enclosed) the optimal solution is less than (or more optimal than) if the third point were to be removed.
+This was verified.
+If the second point is removed, the constraints imposed by the third and fourth points are active.
+Algebra yields $c_x = 1/3$, $r = \sqrt{5}/3$, $\mu_3 = 5/9$, and $\mu_4 = 4/9$.
+In the case of the third point being removed, the constraint imposed by the second point is the only active constraint.
+Algebra yields $c_x = 1/5$, $r = 2\sqrt{5}/5$, $\mu_2 = 1$.
+As the circle is larger in the case of the third point being removed, $2\sqrt{5}/5 > \sqrt{5}/3$, this shows that the second point puts more constraint on the optimal solution than the third point does.
 
 \item Is the solution unique?
 
+Yes.
+
 \end{enumerate}
 
+\subsection{Approach 2}
+
+\begin{enumerate}[a)]
+	\item Express the problem as an unconstrained optimization problem using the log barrier method
+	
+	
+\end{enumerate}
 
 %--- scratch --------- %
 
