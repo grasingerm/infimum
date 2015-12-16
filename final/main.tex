@@ -96,7 +96,7 @@ and,
 and lastly,
 
 \begin{equation*}
-	\mathbf{\mu} = \mathbf{0}.
+	\boldsymbol{\mu} \ge \mathbf{0}.
 \end{equation*}
 
 %The second order sufficient condition is that
@@ -130,10 +130,10 @@ The KKT conditions give the following system of equations,
 \end{eqnarray}
 
 In order to solve for the optimal values, we must make assumptions about which constraints are active and which are inactive.
-It is clear by inspection of Equation \ref{eq:kkt1} that at least one constraint must be active, and so there is no need to check the possibility of no active constraints.
+It is clear by inspection of Equation \ref{eq:kkt1} that at least one constraint must be active, and so there is no need to check the possibility of all inactive constraints.
 This is consistent with intuition because if there were no active constraints the solution would trivially be a circle with radius zero centered anywhere on the line $y=2x$.
 
-If we assume all of the constraints are active then the inequalities given by Equations \ref{eq:ineq1}--\ref{eq:ineq4} become equality constraints.
+If we assume all of the constraints are active, then the inequalities given by Equations \ref{eq:ineq1}--\ref{eq:ineq4} become equality constraints.
 Subtracting Equation \ref{eq:ineq1} from Equation \ref{eq:ineq2} shows that to satisfy both equations, $c_x$ must equal 0.
 Plugging $c_x = 0$ into Equation \ref{eq:ineq1} and solving for the radius of the circle yields $r = 1$.
 However, plugging $c_x = 0$ into Equation \ref{eq:ineq3} results in, $2 - r^2 \le 0$ which is not true.
@@ -149,7 +149,7 @@ This implies the assumption that the constraints imposed by the first and third 
 Next, let us assume that the constraints imposed by the second point, $(1,0)$, and third point, $(1,1)$, are the only active constraints.
 Subtracting Equation \ref{eq:ineq2} from \ref{eq:ineq3} results in $-4c_x + 1 = 0$, or $c_x = 1/4$.
 Plugging $c_x = 1/4$ into Equation \ref{eq:ineq2} and solving for the radius of the circle yields $r = \sqrt{13}/4$.
-The values $c_x = 1/2$ and $r = \sqrt{13}/4$ satisfy Equations \ref{eq:ineq1}--\ref{eq:ineq4} as desired.
+The values $c_x = 1/4$ and $r = \sqrt{13}/4$ satisfy Equations \ref{eq:ineq1}--\ref{eq:ineq4} as desired.
 Since $\mu_1 = \mu_4 = 0$, Equations \ref{eq:kkt1} and \ref{eq:kkt2} become: 
 
 \begin{eqnarray*}
@@ -175,8 +175,9 @@ The values $\mu_1 = \mu_4 = 0$, $\mu_2 = 7/8$, $\mu_3 = 1/8$, $c_x = 1/4$, and $
 
 \item Interpret the meaning of the Lagrange multipliers.
 
-The magnitude of the Lagrange multipliers represents the relative amount of constraint that each active constraint enforces on the optimal solution, i.e. because $\mu_2 = 7/8 > 1/8 = \mu_3$, if the second point is removed (or no longer requires being enclosed) the optimal solution is less than (or more optimal than) if the third point were to be removed.
-This was verified.
+The magnitude of the Lagrange multipliers represent the relative amount of constraint that each active constraint enforces on the optimal solution, i.e. because $\mu_2 = 7/8 > 1/8 = \mu_3$, if the second point is removed (or no longer requires being enclosed) the optimal solution is less than, or more optimal than, if the third point were to be removed.
+
+This was verified as follows.
 If the second point is removed, the constraints imposed by the third and fourth points are active.
 Algebra yields $c_x = 1/3$, $r = \sqrt{5}/3$, $\mu_3 = 5/9$, and $\mu_4 = 4/9$.
 In the case of the third point being removed, the constraint imposed by the second point is the only active constraint.
@@ -186,6 +187,8 @@ As the circle is larger in the case of the third point being removed, $2\sqrt{5}
 \item Is the solution unique?
 
 Yes.
+The optimal solution is unique as the cost function is convex on $y = 2x$ (and no other combination of active/inactive constraints satisfies the KKT conditions).
+However, there are an infinite number of feasible solutions, as a circle with a radius approaching infinity will enclose any given set of points.
 
 \end{enumerate}
 
@@ -204,179 +207,305 @@ Yes.
 	The first order necessary condition is given by
 	
 	\begin{equation*}
-	\begin{bmatrix}2r \\ 0\end{bmatrix} - \mu \sum_{i=1}^n \left[\frac{1}{-(x_i - c_x)^2 - (y_i - 2c_x)^2 + r^2} \begin{bmatrix}2r \\ 2x_i + 4y_i - 10c_x\end{bmatrix}\right] = \mathbf{0},
+	\left(\begin{bmatrix}2r \\ 0\end{bmatrix} - \mu \sum_{i=1}^n \left(\frac{1}{-(x_i - c_x)^2 - (y_i - 2c_x)^2 + r^2} \begin{bmatrix}2r \\ 2x_i + 4y_i - 10c_x\end{bmatrix}\right)\right)\mathbf{d} \ge \mathbf{0}, \forall \mathbf{d},
 	\end{equation*}
 	
 	or,
 	
 	\begin{eqnarray*}
-	1 - \left[\frac{1}{-5c_x^2 + 4c_x - 1 + r^2} + \frac{1}{-5c_x^2 + 2c_x - 1 +r^2} + \frac{1}{-5c_x^2 + 6c_x - 2 +r^2} + \frac{1}{-5c_x^2 +r^2}\right] &=& 0,\\
-	\frac{4-10c_x}{-5c_x^2 + 4c_x - 1 + r^2} + \frac{2-10c_x}{-5c_x^2 + 2c_x - 1 +r^2} + \frac{6-10c_x}{-5c_x^2 + 6c_x - 2 +r^2} + \frac{-10c_x}{-5c_x^2 +r^2} &=& 0.
+	\left(2r - \mu \left[\frac{2r}{-5c_x^2 + 4c_x - 1 + r^2} + \frac{2r}{-5c_x^2 + 2c_x - 1 +r^2} + \frac{2r}{-5c_x^2 + 6c_x - 2 +r^2} + \frac{2r}{-5c_x^2 +r^2}\right]\right)d_1 &\ge& 0,\\
+	-\mu \left(\frac{4-10c_x}{-5c_x^2 + 4c_x - 1 + r^2} + \frac{2-10c_x}{-5c_x^2 + 2c_x - 1 +r^2} + \frac{6-10c_x}{-5c_x^2 + 6c_x - 2 +r^2} + \frac{-10c_x}{-5c_x^2 +r^2}\right)d_2 &\ge& 0.
 	\end{eqnarray*}
+	
+	The second order necessary condition is that,
+	
+%	\begin{eqnarray*}
+%		\mathbf{F(\mathbf{x})} = &\\
+%	&2 - 2r^2\mu \left[\frac{1}{(-5c_x^2 + 4c_x - 1 + r^2)^2} + \frac{1}{(-5c_x^2 + 2c_x - 1 +r^2)^2} + \frac{1}{(-5c_x^2 + 6c_x - 2 +r^2)^2} + \frac{1}{(-5c_x^2 +r^2)^2}\right]
+%	\mathbf{e}_1\mathbf{e}_1 + \\
+%%	&2r\mu \left[\frac{10c_x - 4}{(-5c_x^2 + 4c_x - 1 + r^2)^2} + \frac{10c_x - 2}{(-5c_x^2 + 2c_x - 1 +r^2)^2} + \frac{10c_x -6}{(-5c_x^2 + 6c_x - 2 +r^2)^2} + \frac{10c_x}{(-5c_x^2 +r^2)^2}\right] \mathbf{e}_2\mathbf{e}_1 + \\
+%	&\mu \left[\frac{4-10c_x}{-5c_x^2 + 4c_x - 1 + r^2} + \frac{2-10c_x}{-5c_x^2 + 2c_x - 1 +r^2} + \frac{6-10c_x}{-5c_x^2 + 6c_x - 2 +r^2} + \frac{-10c_x}{-5c_x^2 +r^2} \right] \mathbf{e}_2\mathbf{e}_2
+%	\end{eqnarray*}
+
+\begin{eqnarray*}
+\mathbf{F(\mathbf{x})} = &\\
+&\left[ 2r - \mu \sum_{i=1}^n \frac{2\left[-(x_i-c_x)^2-(y_i-2c_x)^2+r^2\right] - 4r^2}{\left[-(x_i - c_x)^2 - (y_i - 2c_x)^2 + r^2\right]^2} \right]\mathbf{e}_1\mathbf{e}_1 + \\
+&\left[ - \mu \sum_{i=1}^n \frac{2\left[2(x_i-c_x)+4(y_i-2c_x)\right]}{\left[-(x_i - c_x)^2 - (y_i - 2c_x)^2 + r^2\right]^2} \right]\mathbf{e}_1\mathbf{e}_2 + \\
+&\left[ - \mu \sum_{i=1}^n \frac{2\left[2(x_i-c_x)+4(y_i-2c_x)\right]}{\left[-(x_i - c_x)^2 - (y_i - 2c_x)^2 + r^2\right]^2} \right]\mathbf{e}_2\mathbf{e}_1 + \\
+&\left[ - \mu \sum_{i=1}^n \frac{-10\left[-(x_i - c_x)^2 - (y_i - 2c_x)^2 + r^2\right] - \left[2(x_i-c_x)+4(y_i-2c_x)\right]^2}{\left[-(x_i - c_x)^2 - (y_i - 2c_x)^2 + r^2\right]^2} \right]\mathbf{e}_2\mathbf{e}_2,
+\end{eqnarray*}
+
+be a positive semi-definite matrix.
 	
 	\item Describe a strategy to produce a feasible initial estimate for this method.
 	
 	One easy way to produce a feasible initial estimate would be to pick $c_x$ arbitrarily (say $c_x = c_y = 0$) then let $r = \max_i\left[(x_i-c_x)^2 + (y_i-2c_x)^2\right]$.
 	This will give a circle with an arbitrary center that encloses all of the points.
 	
+	\item Do the values calculated in Approach 1 satisfy the optimality conditions in Approach 2?
+	
+	No.
+	The issue with the log-barrier method is that the cost (and gradient of the cost) approach $\mu \cdot \infty$ at the constraints.
+	This means the only way that this log-barrier method can approach the optimal solution is  if $\mu \rightarrow 0$.
+	
 \end{enumerate}
-
 
 \newpage
 
-%--- scratch --------- %
+\section{Problem 2}
 
-Two functions were written in order to solve the smallest triangle problem.
-The first was the main function, \texttt{min\_triangle}, which takes a path to a comma separated value (CSV) file as its input and returns $\mathbf{u}$, $d_1$, $d_2$, $d_3$, and the area of the triangle as its output.
-The format of the CSV is such that each line contains the coordinates of one of the \textit{n} points, and the coordinates are separated by a comma:
+Consider the optimization problem:
 
-\begin{align*}
-x_{11}, & \hspace{0.1in} x_{12}\\
-x_{21}, & \hspace{0.1in} x_{22}\\
-\vdots & \hspace{0.1in} \vdots\\
-x_{n1}, & \hspace{0.1in} x_{n2}
-\end{align*}
+\begin{eqnarray*}
+\min & f(\mathbf{x}), \\
+\text{subject to} & h(\mathbf{x}) = 0,
+\end{eqnarray*}
 
-\noindent If the \texttt{do\_plot} flag that is passed to \texttt{min\_triangle} is true, the function also plots the points given by the CSV and the smallest triangle that encloses them.
-The plot helps verify that the solution satisfies the constraints.
-This function was run with the sequence of points $\{(3,3), (3,4), (4,4), (5,5), (2,5)\}$ stored in the CSV.
+has a solution $\mathbf{x}^*$.
+Let M be an optimistic estimate of $f(\mathbf{x}^*)$, that is $M \le f(\mathbf{x}^*)$.
+Define a new cost function
+\begin{equation} \label{eq:pencost}
+v(M,\mathbf{x}) = \left[f(\mathbf{x})-M\right]^2 + [h(\mathbf{x})]^2,
+\end{equation}
+and the unconstrained problem of finding $\mathbf{x}$ to minimize the cost function.
+For a given value of $M$, a solution $x_M$ to the unconstrained problem is found, and then M is updated through
+\begin{equation} \label{eq:penupdate}
+M_{k+1} = M_k + \sqrt{v(M_k,\mathbf{x}_{M_k})},
+\end{equation}
+and the process is repeated until convergence is reached.
 
-The second function, \texttt{plot\_triangle}, takes $d_1$, $d_2$, and $d_3$ as input and plots an equilateral triangle (using equations (\ref{eq:d1})--(\ref{eq:d3})).
-It acts as a helper function for \texttt{min\_triangle}.
+\begin{enumerate}
+	\item \label{step:opt} Show that if $M=f(\mathbf{x}^*)$, a solution to the unconstrained problem is a solution to the original problem, i.e., $\mathbf{x}_M = \mathbf{x}^*$.
+	
+	The cost function given by Equation \ref{eq:pencost} is the sum of two non-negative terms.
+	To minimize Equation \ref{eq:pencost}, we need to minimize the absolute value of each quantity being squared.
+	The first quantity, $f(\mathbf{x}) - M$, becomes $f(\mathbf{x}) - f(\mathbf{x}^*)$, assuming $M = f(\mathbf{x}^*)$.
+	The absolute value of $f(\mathbf{x}) - f(\mathbf{x}^*)$ becomes zero when $\mathbf{x}_M = \mathbf{x}^*$.
+	This is also true of the absolute value of the other term, $h(\mathbf{x})$.
+	We know that $h(\mathbf{x}^*)$ is equal to zero because $\mathbf{x}^*$ is a feasible solution to the original constrained problem.
+	This means we have shown not only that if $M=f(\mathbf{x}^*)$ then $\mathbf{x}_M = \mathbf{x}^*$, but also that the cost given by Equation \ref{eq:pencost} is zero when this condition is met.
+	
+	\item \label{step:ineq} Show that if $\mathbf{x}_M$ is a solution to the unconstrained problem, then $f(\mathbf{x}_M) \le f(\mathbf{x}^*)$.
+	
+	If $\mathbf{x}_M$ is a solution to the unconstrained optimization problem then we know $v(M, \mathbf{x}_M) \le v(M, \mathbf{x}_M)$ for all $\mathbf{x}$, including $\mathbf{x}^*$.
+	This gives us the following:
+	\begin{eqnarray*}
+		v(M, \mathbf{x}_M) &\le& v(M, \mathbf{x}^*),\\
+		\left[f(\mathbf{x}_M)-M\right]^2 + \left[h(\mathbf{x}_M)\right]^2 &\le& \left[f(\mathbf{x}^*)-M\right]^2, \\
+		\left[f(\mathbf{x}_M)-M\right]^2 &\le& \left[f(\mathbf{x}^*)-M\right]^2, \\
+		f(\mathbf{x}_M) &\le& f(\mathbf{x}^*),
+	\end{eqnarray*}
+	
+	as desired.
+	
+	\item \label{step:ineq2} Show that if $M_k \le f(\mathbf{x}^*)$, then $M_{k+1} \le f(\mathbf{x}^*)$ when using the update equation above.
+	
+	%If $M_k \le f(\mathbf{x}^*)$ then $M_{k+1} - \sqrt{v(M_k,\mathbf{x}_{M_k})} \le f(\mathbf{x}^*)$.
+	%Because $\mathbf{x}_{M_k}$ is a solution to the unconstrained optimization problem we know $v(M, \mathbf{x}_{M_k}) \le v(M, \mathbf{x}^*)$ which implies $M_{k+1} - \sqrt{v(M_k,\mathbf{x}^*)} \le M_{k+1} - \sqrt{v(M_k,\mathbf{x}_{M_k})} \le f(\mathbf{x}^*)$.
+	%Expanding this inequality using Equation \ref{eq:pencost} yields:
+	%\begin{eqnarray*}
+	%	M_{k+1} - \sqrt{v(M_k,\mathbf{x}^*)} &\le& f(\mathbf{x}^*), \\
+	%	M_{k+1} - \sqrt{\left[f(\mathbf{x}^*)-M_k\right]^2} &\le& f(\mathbf{x}^*), \\
+	%	M_{k+1} - f(\mathbf{x}^*)+M_k &\le& f(\mathbf{x}^*), \\
+	%\end{eqnarray*}
+	%but $M_k \le f(\mathbf{x}^*)$ so,
+	%\begin{eqnarray*}
+	%	M_{k+1} - \sqrt{v(M_k,\mathbf{x}^*)} &\le& f(\mathbf{x}^*), \\
+	%	M_{k+1} - \sqrt{\left[f(\mathbf{x}^*)-M_k\right]^2} &\le& f(\mathbf{x}^*), \\
+	%	M_{k+1} - f(\mathbf{x}^*)+M_k &\le& f(\mathbf{x}^*), \\
+	%\end{eqnarray*}
+	
+	The update equation gives us the relationship $M_{k+1} = M_k + \sqrt{v(M_k,\mathbf{x}_{M_k})}$. 
+	Because $v(M_k,\mathbf{x}_{M_k}) \le v(M_k,\mathbf{x}^*)$, we know $M_{k+1} \le M_k + \sqrt{v(M_k,\mathbf{x}^*})$.
+	Some algebra yields,
+	
+	\begin{eqnarray*}
+		M_{k+1} &\le& M_k + \sqrt{v(M_k,\mathbf{x}^*)},\\
+		M_{k+1} &\le& M_k + \sqrt{\left[f(\mathbf{x}^*)-M_k\right]^2}.
+	\end{eqnarray*}
+	
+	If $M_k = f(\mathbf{x}^*)$ then $M_{k+1} = M_k = f(\mathbf{x}^*)$.
+	If $M_k < f(\mathbf{x}^*)$ then $M_{k+1} < M_k - f(\mathbf{x}^*) - M_k = f(\mathbf{x}^*)$.
+	This gives us the desired inequality, that is, $M_{k+1} \le f(\mathbf{x}^*)$.
+	
+	\item Show that $M_k \rightarrow f(\mathbf{x}^*)$ as $k$ increases.
+	
+	Upon inspection of the update function, it is clear that $M_k$ is monotonically increasing as $k$ increases because $\sqrt{v(M_k,\mathbf{x}_{M_k})}$ is non-negative for all values of $M_k$ and $\mathbf{x}_{M_k}$.
+	We also know from Part \ref{step:ineq2} that if $M_1 \le f(\mathbf{x}^*)$, then each successive iteration $M_2, M_3, ...$ will also be bounded by $f(\mathbf{x}^*)$ from above.
+	The sequence $M_k \rightarrow f(\mathbf{x}^*)$ as $k \rightarrow \infty$ because $M_k$ is monotonically increasing, it is bounded by $f(\mathbf{x}^*)$ from above, and $v(M,\mathbf{x}) \ge 0$ will only equal zero (effectively stopping $M_k$ from continuing to increase) when $\mathbf{x}_{M_k}$ is optimal (refer to Part 3) and feasible (otherwise $[h(\mathbf{x})]^2 > 0$).
+	
+	\item What does this method produce if your initial value for M is not optimistic, i.e. $M_1 > f(\mathbf{x}^*)$?
+	
+	The sequence $M_k$ is still monotonically increasing but is no longer bounded.
+	This means that $M_k \rightarrow \infty$ as $k \rightarrow \infty$, i.e., the solution diverges.
+	
+	\item Describe a simple strategy to produce an optimistic initial value for $M$, (other than $M = -\infty$).
+	
+	Use a simple unconstrained optimization method (method of steepest descent, Newton's method, etc.) to find a minimum of $f(\mathbf{x})$ without any constraints.
+	This value should be less than or equal to the same problem with constraints imposed, making it an optimistic estimate.
+	
+\end{enumerate}
 
-\subsubsection{Source Code}
-\vspace{0.25in}
-\begin{lstlisting}
-%% min_triangle.m
+\newpage
 
-function [x, d1, d2, d3, area] = min_triangle(filename, R1, C1, do_plot)
-%MIN_TRIANGLE Finds min equilateral triangle that encloses given points.
-%
-%   [x, d1, d2, d3, area] = MIN_TRIANGLE(filename) finds the smallest
-%   equilateral triangle that encloses the set of points contained in 
-%   the csv file given by filename. Plots points and resulting triangle.
-%
-%   [x, d1, d2, d3, area] = MIN_TRIANGLE(filename, R1, C1) finds the 
-%	smallest equilateral triangle that encloses the set of points 
-%	contained in the csv file given by filename. Skips first R1 rows and
-%	C1 columns of csv. Plots points and resulting triangle.
-%
-%   [x, d1, d2, d3, area] = MIN_TRIANGLE(filename, R1, C1, do_plot) 
-%	finds the smallest equilateral triangle that encloses the set of 
-%	points contained in the csv file given by filename. Skips first R1 
-%	rows and C1 columns of csv. If do_plot is true, plots points and 
-%	resulting triangle, else no plot is created.
+\section{Problem 3}
 
-  validateattributes(filename, {'char','cell'}, {'nonempty'});
-  
-  if nargin < 3
-    R1 = 0;
-    C1 = 0;
-  end
-  
-  if nargin < 4
-    do_plot = true;
-  end
-  
-  % equations of lines
-  a = [0 1; sqrt(3)/2 1/2; -sqrt(3)/2 1/2];
-  
-  % read points in from csv file
-  X = csvread(filename, R1, C1);
-  
-  % constraints: A * x \leq b
-  % d1, d2, d3 = u1 - v1, u2 - v2, u3 - v3
-  num_points = size(X, 1);
-  A = zeros(3*num_points, 3*num_points+6);
-  b = zeros(3*num_points, 1);
-  LB = zeros(1, 3*num_points+6);
-  UB(1, 1:3*num_points+6) = Inf;
-  
-  for i=1:num_points
-    A(3*i-2,    1:2)   = [1 -1];
-    A(3*i-1,    3:4)   = [1 -1];
-    A(3*i,      5:6)   = [1 -1];
-    A(3*i-2,    3*i+4) =  1;
-    A(3*i-1,    3*i+5) = -1;
-    A(3*i,      3*i+6) = -1;
-    b(3*i-2:3*i)       = a * transpose(X(i,:));
-  end
-  
-  % x = [d1; d2; d3]  = [u1; v1; u2; v2; u3; v3];
-  % f = [-1; 1; 1]    = [-1; 1; 1; -1; 1; -1];
-  f = zeros(3*num_points + 6, 1);
-  f(1:6) = [-1; 1; 1; -1; 1; -1];
-  x = linprog(f, [], [], A, b, LB, UB);
-  
-  d1 = x(1) - x(2);
-  d2 = x(3) - x(4);
-  d3 = x(5) - x(6);
-  
-  area = sqrt(3) / 3 * (-d1 + d2 + d3)^2;
-  
-  if do_plot
-    scatter(X(:,1), X(:,2))
-    hold on
-    plot_triangle(d1, d2, d3);
-  end
+Consider the constrained optimization problem:
 
-end
-\end{lstlisting}
+\begin{eqnarray*}
+	\min & \mathbf{c}^T \mathbf{x}, \\
+	\text{subject to} & \mathbf{a}^T \mathbf{x} &\le 1, \\
+	& \mathbf{x} &\le \mathbf{0}.
+\end{eqnarray*}
 
-\subsubsection{Results}
+\begin{enumerate}
 
-The output of the \texttt{min\_triangle} function was
+\item Write the KKT optimization conditions. How many equations and how many unknowns do you have?
 
-\vspace{0.25in}
-\hrule
+\begin{eqnarray}
+	\boldsymbol{\nabla}\mathbf{c}^T \mathbf{x} + \mu_1 \boldsymbol{\nabla} (\mathbf{a}^T \mathbf{x} - 1) + \sum_{i=1}^n \lambda_i \boldsymbol{\nabla} x_i &=& 0, \\
+	\label{eq:kkt31} \mathbf{c} + \mu_1 \mathbf{a} + \boldsymbol{\lambda} &=& 0,
+\end{eqnarray}
 
-\begin{verbatim}
->> [x, d1, d2, d3, area] = min_triangle('points.csv')
-Optimization terminated.
+where $\boldsymbol{\lambda} = \begin{bmatrix}
+\lambda_1 & \lambda_2 & ... & \lambda_{n}
+\end{bmatrix}^T$ is an $n$ element vector of Lagrange multipliers, and,
 
-x =
+\begin{eqnarray}
+	\label{eq:kkt32} \mu_1(\mathbf{a}^T \mathbf{x} - 1) &=& 0,\\
+	\label{eq:kkt33} \forall i, \lambda_i x_i &=& 0.
+\end{eqnarray}
 
-  234.1260
-  231.1260
-  225.3782
-  218.5481
-  229.3384
-  228.5705
-  0.0000
-  2.7321
-  1.8660
-  1.0000
-  2.2321
-  1.3660
-  1.0000
-  1.3660
-  2.2321
-  2.0000
-  0.0000
-  2.5981
-  2.0000
-  2.5981
-  0.0000
+Equation \ref{eq:kkt31} represents a system of $n$ equations and $n+1$ unknowns.
+Equation \ref{eq:kkt32} is one equation with $n$ additional unknowns, $\mathbf{x}$.
+Equation \ref{eq:kkt33} is a system of $n$ equations with no additional unknowns.
+This gives us a total of $2n + 1$ equations and $2n + 1$ unknowns.
 
+\item Barrier method.
+\begin{enumerate}[a)]
+	\item Rewrite the problem as an unconstrained optimization problem using the log barrier function.
+	
+	\begin{equation*}
+	B_\mu(\mathbf{x}) = \mathbf{c}^T \mathbf{x} - \mu\left[\log(1 - \mathbf{a}^T \mathbf{x}) + \sum_{i=1}^n \log(-x_i)\right]
+	\end{equation*}
+	
+	\item Derive the first order necessary conditions for the unconstrained optimization problem.
+	
+	\begin{eqnarray*}
+	\boldsymbol{\nabla}\left(\mathbf{c}^T \mathbf{x} - \mu\left[\log(1 - \mathbf{a}^T \mathbf{x}) + \sum_{i=1}^n \log(-x_i)\right]\right)\mathbf{d} &\ge& 0, \\
+	\left(\mathbf{c} - \mu\left[\frac{-\mathbf{a}}{1 - \mathbf{a} \mathbf{x}} + \begin{bmatrix} \frac{1}{x_1} \\ \frac{1}{x_2} \\ \vdots \\ \frac{1}{x_n}\end{bmatrix}^T\right]\right)\mathbf{d} &\ge& 0, \\
+	\left(\mathbf{c} - \mu\left[\frac{-\mathbf{a}}{1 - \mathbf{a}^T \mathbf{x}} + \sum_{i=1}^n \frac{\mathbf{e}_i}{x_i}\right]\right)\mathbf{d} &\ge& 0.
+	\end{eqnarray*}
+	
+	\item Derive the Hessian of the unconstrained problem.
+	
+	\begin{eqnarray*}
+		\mathbf{F}(\mathbf{x}) &=& \boldsymbol{\nabla}\left(\mathbf{c} - \mu\left[\frac{-\mathbf{a}}{1 - \mathbf{a}^T \mathbf{x}} + \sum_{i=1}^n \frac{\mathbf{e}_i}{x_i}\right]\right), \\
+		&=& -\boldsymbol{\nabla}\mu\left[\frac{-\mathbf{a}}{1 - \mathbf{a}^T \mathbf{x}} + \sum_{i=1}^n \frac{\mathbf{e}_i}{x_i}\right], \\
+		&=& -\mu\left[\boldsymbol{\nabla}\frac{-\mathbf{a}}{1 - \mathbf{a}^T \mathbf{x}} + \sum_{i=1}^n \boldsymbol{\nabla}\frac{\mathbf{e}_i}{x_i}\right],\\
+		&=& -\mu\left[\frac{-\mathbf{a}\mathbf{a}^T}{(1 - \mathbf{a}^T \mathbf{x})^2} - \sum_{i=1}^n \frac{\mathbf{e}_i\mathbf{e}_i^T}{x_i^2}\right], \\
+		&=& \mu\left[\frac{1}{(1 - \mathbf{a}^T \mathbf{x})^2}\begin{bmatrix}
+			a_1^2 & a_1 a_2 & ... & a_1 a_n \\
+			a_2 a_1 & a_2^2 & ... & a_2 a_n \\
+			\vdots & \vdots & ... & \vdots \\
+			a_n a_1 & a_n a_2 & ... & a_n^2 \\
+		\end{bmatrix} + \begin{bmatrix}
+		\frac{1}{x_1^2} & 0 & ... & 0 \\
+		0 & \frac{1}{x_2^2} & ... & 0 \\
+		\vdots & \vdots & ... & \vdots \\
+		0 & 0 & ... & \frac{1}{x_n^2} \\
+	\end{bmatrix}\right].
+	\end{eqnarray*}
+	
+	The positive semi-definiteness of the Hessian is dependent on $\mathbf{a}$ and $\mathbf{x}$.
+	From the above formulation, it is clear that the values of the Hessian on the diagonal will always be positive.
+	For the Hessian to be positive semi-definite it is sufficient that all of its principal minors all be greater than or equal to zero.
+	This can guaranteed if the off diagonal terms are less than or equal to zero.
+	
+\end{enumerate}
+	
+\end{enumerate}
 
-d1 =
+\newpage
 
-  3.0000
+\section{Problem 4}
 
+Given a positive-definite matrix $\mathbf{A}$, you are tasked with finding its largest and smallest eigenvalues and corresponding eigenvectors.
 
-d2 =
-
-  6.8301
-
-
-d3 =
-
-  0.7679
-
-
-area =
-
-  12.2065
-\end{verbatim}
+\begin{enumerate}
+	\item Show that the constrained optimization problem,
+	\begin{eqnarray*}
+		\min & \mathbf{x}^T\mathbf{A}\mathbf{x}, \\
+		\text{subject to} & \mathbf{x}^T\mathbf{x} = 1,
+	\end{eqnarray*}
+	has a solution $\mathbf{x}^*$ that is the eigenvector corresponding to the smallest eigenvalue.
+	
+	If $\mathbf{A}$ is a symmetric matrix and $\mathbf{D}$ is a diagonal matrix whose diagonal entries are the eigenvalues of $\mathbf{A}$, then there exists an orthogonal matrix $\mathbf{Q}$ such that $\mathbf{A} = \mathbf{Q}^{-1} \mathbf{D} \mathbf{Q}$.
+	The matrix $\mathbf{A}$ is given as positive definite so we know that it is a symmetric matrix.
+	Orthogonal matrices have interesting properties, namely $Q^T = Q^{-1}$, and as a linear transformation, an orthogonal matrix preserves the dot product of two vectors.
+	
+	Let $\mathbf{u}$ be such a linear transformation so that $\mathbf{u} = \mathbf{Q}^T\mathbf{x}$.
+	Note that by the properties of an orthogonal matrix previously described, $\mathbf{x}^T\mathbf{A}\mathbf{x} = \mathbf{x}^T\mathbf{Q}^T \mathbf{D} \mathbf{Q}\mathbf{x} = \mathbf{u}^T\mathbf{D}\mathbf{u}$ and $\mathbf{x}^T\mathbf{x} = \mathbf{u}^T\mathbf{u}$.
+	Using these transformations we can rewrite the constrained optimization problem as,
+	\begin{eqnarray*}
+		\min & \mathbf{u}^T\mathbf{D}\mathbf{u}, \\
+		\text{subject to} & \mathbf{u}^T\mathbf{u} = 1.
+	\end{eqnarray*}
+	
+	The constraint $\mathbf{u}^T\mathbf{u} = 1$ enforces that $\mathbf{u}$ be a unit vector.
+	The cost function can be rewritten as $D_{11} u_1^2 + D_{22} u_2^2 + ... + D_{nn} u_n^2$ because $\mathbf{D}$ is a diagonal matrix.
+	Some thought shows us that the optimal solution results in $u_i = 1$, $u_j = 0, \forall j \ne i$, where $D_{ii}$ is the smallest eigenvalue of the matrix $\mathbf{A}$.
+	%Using the linear transformation, $\mathbf{Q}$, to map $\mathbf{u}$ back to the original space results in $\mathbf{x} = \mathbf{Q}\mathbf{u}$ which is the eigenvector corresponding to the smallest eigenvalue of $\mathbf{A}$.
+	Lastly, because $\mathbf{A}$ is positive definite, the $i^{th}$ column of $\mathbf{Q}$ corresponds to the $i^{th}$ eigenvalue in the diagonal matrix $\mathbf{D}$.
+	Since $\mathbf{x} = \mathbf{Q} \mathbf{u}$, the solution to the optimization problem, $\mathbf{x}^*$, is the eigenvector corresponding to the smallest eigenvalue of $\mathbf{A}$.
+	
+	\item What is the cost value at the minimum in relation to the smallest eigenvalue?
+	
+	It was shown previously that at the minimum $\mathbf{u}^T\mathbf{D}\mathbf{u}$ is equal to the smallest eigenvalue.
+	Since $\mathbf{u}^T\mathbf{D}\mathbf{u} = \mathbf{x}^T\mathbf{A}\mathbf{x}$, the cost of the original constrained optimization problem is also equal to the smallest eigenvalue.
+	
+	\item Express finding the largest eigenvalue and corresponding eigenvector as an optimization problem similar to the one above.
+	
+	To find the largest eigenvalue and corresponding eigenvector,
+	
+	\begin{eqnarray*}
+		\max & \mathbf{x}^T\mathbf{A}\mathbf{x}, \\
+		\text{subject to} & \mathbf{x}^T\mathbf{x} = 1,
+	\end{eqnarray*}
+	
+	or equivalently,
+	
+	\begin{eqnarray*}
+		\min & -\mathbf{x}^T\mathbf{A}\mathbf{x}, \\
+		\text{subject to} & \mathbf{x}^T\mathbf{x} = 1.
+	\end{eqnarray*}
+	
+	\item Exact Penalty Method
+	
+	\begin{enumerate}[a)]
+		\item Express the constrained minimization in part 1 as an unconstrained optimization problem using the exact penalty method with an absolute value penalty term and penalty parameter $c$.
+		
+		The optimization problem rewritten as unconstrained and using an absolute value penalty term is given by,
+		
+		\begin{eqnarray}
+		\label{eq:expen}
+			\min & \mathbf{x}^T\mathbf{A}\mathbf{x} - c|\mathbf{x}^T\mathbf{x} - 1|. 
+		\end{eqnarray}
+		
+		\item For what values of the penalty parameter $c$ is the optimal $\mathbf{x}_c = \mathbf{x}^*$?
+		
+		The first order condition for the optimal solution of Equation \ref{eq:expen} is,
+		
+		\begin{eqnarray*}
+		\boldsymbol{\nabla}\left(\mathbf{x}^T\mathbf{A}\mathbf{x} - c|\mathbf{x}^T\mathbf{x} - 1|\right)\mathbf{d} &\ge& 0,\\
+		\left(2\mathbf{x}^T\mathbf{A} - c\boldsymbol{\nabla}|\mathbf{x}^T\mathbf{x} - 1|\right)\mathbf{d} &\ge& 0,\\
+		\left(2\mathbf{x}^T\mathbf{A} - 2c\mathbf{x}\frac{\mathbf{x}^T\mathbf{x} - 1}{|\mathbf{x}^T\mathbf{x} - 1|}\right)\mathbf{d} &\ge& 0.
+		\end{eqnarray*}
+		
+		The penalty parameter $c$ must satisfy the inequality above for $\mathbf{x}_c = \mathbf{x}^*$ to be optimal.
+		
+	\end{enumerate}
+	
+\end{enumerate}
 
 \end{document}
