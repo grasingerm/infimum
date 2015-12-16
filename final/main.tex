@@ -192,10 +192,37 @@ Yes.
 \subsection{Approach 2}
 
 \begin{enumerate}[a)]
-	\item Express the problem as an unconstrained optimization problem using the log barrier method
+	\item Express the problem as an unconstrained optimization problem using the log barrier method.
 	
+	\begin{equation*}
+	\min_{r,c_x} r^2 - \mu \sum_{i=1}^n \log\left[-(x_i - c_x)^2 - (y_i - 2c_x)^2 
+	+ r^2\right]
+	\end{equation*}
+	
+	\item Find the optimality conditions.
+	
+	The first order necessary condition is given by
+	
+	\begin{equation*}
+	\begin{bmatrix}2r \\ 0\end{bmatrix} - \mu \sum_{i=1}^n \left[\frac{1}{-(x_i - c_x)^2 - (y_i - 2c_x)^2 + r^2} \begin{bmatrix}2r \\ 2x_i + 4y_i - 10c_x\end{bmatrix}\right] = \mathbf{0},
+	\end{equation*}
+	
+	or,
+	
+	\begin{eqnarray*}
+	1 - \left[\frac{1}{-5c_x^2 + 4c_x - 1 + r^2} + \frac{1}{-5c_x^2 + 2c_x - 1 +r^2} + \frac{1}{-5c_x^2 + 6c_x - 2 +r^2} + \frac{1}{-5c_x^2 +r^2}\right] &=& 0,\\
+	\frac{4-10c_x}{-5c_x^2 + 4c_x - 1 + r^2} + \frac{2-10c_x}{-5c_x^2 + 2c_x - 1 +r^2} + \frac{6-10c_x}{-5c_x^2 + 6c_x - 2 +r^2} + \frac{-10c_x}{-5c_x^2 +r^2} &=& 0.
+	\end{eqnarray*}
+	
+	\item Describe a strategy to produce a feasible initial estimate for this method.
+	
+	One easy way to produce a feasible initial estimate would be to pick $c_x$ arbitrarily (say $c_x = c_y = 0$) then let $r = \max_i\left[(x_i-c_x)^2 + (y_i-2c_x)^2\right]$.
+	This will give a circle with an arbitrary center that encloses all of the points.
 	
 \end{enumerate}
+
+
+\newpage
 
 %--- scratch --------- %
 
